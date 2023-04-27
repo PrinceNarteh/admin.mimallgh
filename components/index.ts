@@ -13,7 +13,7 @@ export { OrderDetails } from "./OrderDetails";
 export { OrderListTable } from "./OrderListTable";
 export { SearchFilter } from "./SearchFilter";
 export { Section } from "./Section";
+export { SelectOption } from "./SelectOption";
 export { AddShopForm } from "./ShopForm";
-export { ShopOwnerForm } from "./ShopOwnerForm";
 export { SideBar } from "./SideBar";
 export { Status } from "./Status";

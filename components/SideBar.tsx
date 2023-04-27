@@ -135,6 +135,8 @@ export const SideBar = ({ open }: { open: boolean }) => {
                 className="rounded-full"
                 src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8YXZhdGFyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60"
                 alt="profile"
+                width={30}
+                height={30}
               />
             </div>
             <div className="flex flex-col pl-3">
