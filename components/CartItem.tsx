@@ -1,13 +1,12 @@
 import Image from "next/image";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
-import productOne from "../../assets/images/product-1.jpg";
 
 export const CartItem = () => {
   return (
     <div className="flex h-28 w-full rounded bg-gray-300">
       <div className="relative w-24 shrink-0">
-        <Image src={productOne} fill style={{ objectFit: "contain" }} alt="" />
+        <Image src={""} fill style={{ objectFit: "contain" }} alt="" />
       </div>
       <div className="flex-1 border-l border-l-gray-400 py-2 px-5">
         <h3 className="line-clamp-1 text-xl font-semibold tracking-wide">

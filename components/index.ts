@@ -1,4 +1,4 @@
-export { AdminAddProductForm } from "./AddProductForm";
+export { AddProductForm } from "./AddProductForm";
 export { AdminForm } from "./AdminForm";
 export { Back } from "./Back";
 export { Button } from "./Button";

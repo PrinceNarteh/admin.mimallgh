@@ -1,13 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
 
-import { useEffect } from "react";
-import { createAdminDto, updateAdminDto } from "./../utils/validations";
+import { createAdminDto, updateAdminDto } from "@/utils/validations";
 import { Button, Card, InputField, Loader } from "./index";
 
-import { capitalize } from "../utils/utilities";
+import { capitalize } from "@/utils/utilities";
 
 const levels = ["level_one", "level_two", "level_three", "super_user"];
 
@@ -16,7 +14,6 @@ export const AdminForm = () => {
   const {
     register,
     formState: { errors, isSubmitting },
-    reset,
     getValues,
     handleSubmit,
   } = useForm({

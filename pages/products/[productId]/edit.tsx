@@ -1,11 +1,10 @@
-import AdminAddProductForm from "../../../components/AddProductForm";
-import Back from "../../../components/Back";
+import { AddProductForm, Back } from "@/components";
 
 const EditProduct = () => {
   return (
     <div>
       <Back />
-      <AdminAddProductForm />
+      <AddProductForm />
     </div>
   );
 };

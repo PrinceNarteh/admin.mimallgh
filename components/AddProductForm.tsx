@@ -1,45 +1,21 @@
+import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
+import { useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import axios from "axios";
 import { toast } from "react-hot-toast";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 
-import { Button, Card, InputField, Modal, SearchFilter, Loader } from "./index";
+import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
+import { Product } from "@/types/product";
+import { categories } from "@/utils/menus";
+import { convertBase64 } from "@/utils/utilities";
+import { deleteProductImage } from "@/utils/deleteProductImage";
+import { ICreateProduct } from "@/utils/validations";
+import { Button, Card, InputField, Modal, SelectOption } from "./index";
 
-import { SelectOption } from "./SelectOption";
-import { deleteProductImage } from "../utils/deleteProductImage";
-import { IAdminCreateProductDto } from "../utils/validations";
-
-const convertBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve) => {
-    const fileReader = new FileReader();
-    fileReader.readAsDataURL(file);
-
-    fileReader.onload = () => {
-      resolve(fileReader.result as string);
-    };
-  });
-};
-
-const categories = [
-  { label: "Food", value: "food" },
-  { label: "Fashion & Wears", value: "fashion_and_wears" },
-  { label: "Grocery & General", value: "grocery_and_general" },
-  { label: "Health & Wellness", value: "health_and_wellness" },
-  {
-    label: "Home & Electrical Appliances",
-    value: "home_and_electrical_appliances",
-  },
-  { label: "Personal Services", value: "personal_services" },
-  { label: "Printing & Stationary", value: "printing_and_stationery" },
-  { label: "Tech", value: "tech" },
-];
-
-const initialValues: IAdminCreateProductDto = {
-  id: "",
+const initialValues: ICreateProduct = {
   brand: "",
   category: "food",
   description: "",
@@ -51,7 +27,7 @@ const initialValues: IAdminCreateProductDto = {
   images: [],
 };
 
-export const AdminAddProductForm = () => {
+export const AddProductForm = ({ product }: { product?: Product }) => {
   const {
     query: { productId },
     push,
@@ -62,16 +38,15 @@ export const AdminAddProductForm = () => {
     formState: { errors },
     setValue,
     getValues,
-    reset,
     handleSubmit,
-  } = useForm<IAdminCreateProductDto>({
-    defaultValues: initialValues,
+  } = useForm<ICreateProduct>({
+    defaultValues: product ? product : initialValues,
   });
-  const setFetchAgain = useState(true)[1];
   const [images, setImages] = useState<File[]>([]);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [publicId, setPublicId] = useState("");
+  const axiosAuth = useAxiosAuth();
 
   const selectedImages = (e: ChangeEvent<HTMLInputElement>) => {
     const files: FileList | null = e.target.files;
@@ -133,7 +108,7 @@ export const AdminAddProductForm = () => {
     }
   }
 
-  const submitHandler: SubmitHandler<IAdminCreateProductDto> = (data) => {
+  const submitHandler: SubmitHandler<ICreateProduct> = async (data) => {
     const toastId = toast.loading("Loading");
     const imageUrls = [];
 
@@ -145,53 +120,62 @@ export const AdminAddProductForm = () => {
       formData.append("file", images[i] as File);
       imageUrls[i] = axios.post(
         "https://api.cloudinary.com/v1_1/prinart/image/upload",
-        formData
+        formData,
+        { headers: { "X-Requested-With": "XMLHttpRequest" } }
       );
     }
 
     try {
-      Promise.all(imageUrls)
-        .then((res) => {
-          return res.map((item) => ({
-            public_id: item.data.public_id,
-            secure_url: item.data.secure_url,
-          }));
-        })
-        .then((res) => {
-          const newData = {
-            ...data,
-            images: res,
-          };
+      let imagesArr: {
+        public_id: any;
+        secure_url: any;
+      }[] = [];
 
-          if (data.id) {
-           
-          } else {
-            
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      await Promise.all(imageUrls).then((res) => {
+        imagesArr = res.map((item) => ({
+          public_id: item.data.public_id,
+          secure_url: item.data.secure_url,
+        }));
+      });
+
+      const newData = {
+        ...data,
+        images: [...data.images, ...imagesArr],
+      };
+
+      console.log(data.images);
+
+      // if (productId) {
+      //   const res = await axiosAuth.patch(`/products/${productId}`, newData);
+      //   if (res.status === 200) {
+      //     toast.success("Product updated successfully");
+      //     push(`/products/${productId}`);
+      //   } else {
+      //     toast.error("Error updating product");
+      //   }
+      // } else {
+      //   const res = await axiosAuth.post("/products", newData);
+      //   if (res.status === 201) {
+      //     toast.success("Product created successfully");
+      //     push(`/products/${res.data.id}`);
+      //   } else {
+      //     toast.error("Error updating product");
+      //   }
+      // }
     } catch (error) {
       console.log(error);
+    } finally {
+      toast.dismiss(toastId);
     }
   };
 
+  console.log(errors);
 
   return (
     <div className="mx-auto max-w-4xl pb-5">
       <Card heading={"Add Product"}>
         <form onSubmit={handleSubmit(submitHandler)}>
           <div className="space-y-4">
-            <label className="-mb-2 block pl-2 capitalize tracking-widest">
-              Shop
-            </label>
-            <SearchFilter
-              errors={errors}
-              field="shopId"
-              setValue={setValue}
-              options={shops || []}
-              value={getValues().shopId}
-            />
             <InputField
               label="Title"
               name="title"
@@ -285,7 +269,7 @@ export const AdminAddProductForm = () => {
                     >
                       <AiOutlineCloseCircle
                         onClick={() => deleteImage(image.public_id)}
-                        className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
+                        className="absolute -right-2 -top-2 z-0 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
                       />
                       <div className="overflow-hidden">
                         <Image
@@ -362,9 +346,7 @@ export const AdminAddProductForm = () => {
               accept=".png, .jpg, .jpeg"
             ></input>
           </div>
-          <Button type="submit">
-            {getValues()?.id ? "Edit" : "Add"} Product
-          </Button>
+          <Button type="submit">{productId ? "Edit" : "Add"} Product</Button>
         </form>
       </Card>
       {openDialog ? (
@@ -380,5 +362,3 @@ export const AdminAddProductForm = () => {
     </div>
   );
 };
-
-export default AdminAddProductForm;
