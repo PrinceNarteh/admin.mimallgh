@@ -4,13 +4,10 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 
 import { useEffect } from "react";
-import { api } from "./../utils/api";
 import { createAdminDto, updateAdminDto } from "./../utils/validations";
-import { Button } from "./Button";
-import Card from "./Card";
-import InputField from "./InputField";
+import { Button, Card, InputField, Loader } from "./index";
+
 import { capitalize } from "../utils/utilities";
-import Loader from "./Loader";
 
 const levels = ["level_one", "level_two", "level_three", "super_user"];
 
@@ -44,41 +41,10 @@ export const AdminForm = () => {
     ),
   });
 
-  const { data, isLoading } = api.users.getUserById.useQuery({
-    id: router.query.adminId as string,
-  });
-
-  const updateAdmin = api.users.updateAdmin.useMutation();
-  const createAdmin = api.users.createAdmin.useMutation({
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
-  console.log(errors);
-
-  useEffect(() => {
-    reset(data as any);
-  }, [data]);
-
   const submitHandler = async (data: any) => {
     console.log(data);
     if (!data.id) {
-      createAdmin.mutate(data, {
-        onSuccess: (data) => {
-          toast.success("Admin created successfully");
-          reset();
-          router.push(`/administrators/${data.id}`);
-        },
-      });
     } else {
-      updateAdmin.mutate(data, {
-        onSuccess: (data) => {
-          toast.success("Admin updated successfully");
-          reset();
-          router.push(`/administrators/${data.id}`);
-        },
-      });
     }
   };
 

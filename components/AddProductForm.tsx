@@ -7,15 +7,10 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 
-import { api } from "../utils/api";
-import { Button } from "./Button";
-import Card from "./Card";
-import InputField from "./InputField";
-import Modal from "./Modal";
-import SearchFilter from "./SearchFilter";
+import { Button, Card, InputField, Modal, SearchFilter, Loader } from "./index";
+
 import { SelectOption } from "./SelectOption";
 import { deleteProductImage } from "../utils/deleteProductImage";
-import Loader from "./Loader";
 import { IAdminCreateProductDto } from "../utils/validations";
 
 const convertBase64 = (file: File): Promise<string> => {
@@ -77,18 +72,6 @@ export const AdminAddProductForm = () => {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [publicId, setPublicId] = useState("");
-  const getAllShops = api.shops.getAllShops.useQuery();
-  const createProductMutation = api.products.createProduct.useMutation();
-  const updateProductMutation = api.products.updateProduct.useMutation();
-  const { data, refetch, isLoading, isError } =
-    api.products.getProductById.useQuery(
-      {
-        id: productId as string,
-      },
-      {
-        enabled: false,
-      }
-    );
 
   const selectedImages = (e: ChangeEvent<HTMLInputElement>) => {
     const files: FileList | null = e.target.files;
@@ -120,13 +103,6 @@ export const AdminAddProductForm = () => {
     };
     getImages();
   }, [images]);
-
-  const shops = getAllShops?.data?.map((shop) => ({
-    id: shop.id,
-    label: `${shop?.name || ""} - ${shop?.owner?.firstName || ""} ${
-      shop?.owner?.middleName || ""
-    } ${shop?.owner?.lastName}`,
-  }));
 
   const deleteImage = (public_id: string) => {
     setPublicId(public_id);
@@ -188,30 +164,9 @@ export const AdminAddProductForm = () => {
           };
 
           if (data.id) {
-            updateProductMutation.mutate(newData, {
-              onSuccess: (value) => {
-                toast.dismiss(toastId);
-                toast.success("Product updated successfully");
-                push(`/products/${value?.id || ""}`).catch((error) =>
-                  console.log(error)
-                );
-              },
-              onError: () => {
-                toast.dismiss(toastId);
-              },
-            });
+           
           } else {
-            createProductMutation.mutate(newData, {
-              onSuccess: () => {
-                toast.dismiss(toastId);
-                toast.success("Product created successfully");
-                reset();
-              },
-              onError: () => {
-                toast.dismiss(toastId);
-              },
-            });
-          }
+            
         })
         .catch((error) => {
           console.log(error);
@@ -221,23 +176,6 @@ export const AdminAddProductForm = () => {
     }
   };
 
-  useEffect(() => {
-    if (productId && !getValues().id) {
-      refetch();
-      reset(data as any);
-      setFetchAgain(false);
-    }
-  }, [data]);
-
-  if (productId && isLoading) {
-    return <Loader />;
-  }
-
-  console.log(isError);
-
-  if (isError) {
-    toast.error("Error fetching data");
-  }
 
   return (
     <div className="mx-auto max-w-4xl pb-5">

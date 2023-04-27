@@ -5,19 +5,13 @@ import { toast } from "react-hot-toast";
 import { FiInstagram } from "react-icons/fi";
 import { ImFacebook2, ImWhatsapp } from "react-icons/im";
 
-import type { Shop } from "@prisma/client";
-import { api } from "./../utils/api";
 import { locations } from "./../utils/menus";
 import {
   createShopDto,
   updateShopDto,
   type IUpdateShopDto,
 } from "./../utils/validations";
-import { Button } from "./Button";
-import Card from "./Card";
-import InputField from "./InputField";
-import Loader from "./Loader";
-import SearchFilter from "./SearchFilter";
+import { Button, Card, InputField, Loader, SearchFilter } from "./index";
 import SelectField from "./SelectField";
 
 const initialState: IUpdateShopDto = {
@@ -38,9 +32,6 @@ const initialState: IUpdateShopDto = {
 
 export const AddShopForm = () => {
   const router = useRouter();
-  const { data, isLoading } = api.shops.getShopById.useQuery({
-    shopId: router.query.shopId as string,
-  });
 
   const {
     register,
@@ -59,28 +50,9 @@ export const AddShopForm = () => {
     control,
   });
 
-  const shopOwners = api.users.getUsersByRole.useQuery({ role: "shop_owner" });
-  const createShopMutation = api.shops.createShop.useMutation();
-  const updateShopMutation = api.shops.updateShop.useMutation();
-
   const submitHandler: SubmitHandler<IUpdateShopDto> = (value) => {
     if (!value.id) {
-      createShopMutation.mutate(value, {
-        onSuccess(data) {
-          const { id } = data as Shop;
-          toast.success("Shop created successfully");
-          router.push(`/shops/${id}`).catch((error) => console.log(error));
-        },
-      });
     } else {
-      updateShopMutation.mutate(value, {
-        onSuccess: () => {
-          toast.success("Update successful");
-          router
-            .push(`/shops/${router.query.shopId as string}`)
-            .catch((error) => console.log(error));
-        },
-      });
     }
   };
 
