@@ -25,3 +25,22 @@ export type Product = {
     secure_url: string;
   }[];
 };
+
+export type Shop = {
+  id: string;
+  name: string;
+  shopCode: string;
+  plainPassword: string;
+  description: string;
+  location: string;
+  mapDirection: string;
+  phoneNumber: string;
+  alternateNumber?: string;
+  whatsappNumber?: string;
+  instagramHandle?: string;
+  facebookHandle?: string;
+  openingTime: string;
+  closingTime: string;
+  image: string;
+  products: Product[];
+};

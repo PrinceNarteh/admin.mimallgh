@@ -3,7 +3,7 @@ import { capitalize } from "@/utils/utilities";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { BiSearch } from "react-icons/bi";
-import { Product } from "@/types/product";
+import { Product } from "@/types";
 
 const ProductList = ({ products }: { products: Product[] }) => {
   const router = useRouter();

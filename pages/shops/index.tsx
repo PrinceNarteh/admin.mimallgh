@@ -1,14 +1,20 @@
+import { getShops } from "@/services/shops";
+import { Shop } from "@/types";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { api } from "../../utils/api";
-import Loader from "../../components/Loader";
 
-const Shops = () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const data = await getShops();
+
+  return {
+    props: {
+      shops: data,
+    },
+  };
+};
+
+const Shops = ({ shops }: { shops: Shop[] }) => {
   const router = useRouter();
-  const { data, isLoading } = api.shops.getAllShops.useQuery();
-
-  if (isLoading) {
-    return <Loader />;
-  }
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -24,7 +30,7 @@ const Shops = () => {
             </tr>
           </thead>
           <tbody>
-            {data?.map((shop, idx) => (
+            {shops?.map((shop, idx) => (
               <tr
                 className="cursor-pointer rounded bg-light-gray"
                 onClick={() => {
@@ -36,11 +42,6 @@ const Shops = () => {
               >
                 <td className="py-5 text-center ">{idx + 1}</td>
                 <td className="py-5 text-left">{shop.name}</td>
-                <td className="py-5 text-center ">
-                  <div>{`${shop?.owner.firstName || ""} ${
-                    shop?.owner.middleName || ""
-                  } ${shop?.owner.lastName || ""}`}</div>
-                </td>
                 <td className="py-5 text-center">{shop.location}</td>
                 <td className="py-5 text-center ">{shop.phoneNumber}</td>
               </tr>

@@ -8,7 +8,7 @@ import { toast } from "react-hot-toast";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 
 import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
-import { Product } from "@/types/product";
+import { Product } from "@/types";
 import { categories } from "@/utils/menus";
 import { convertBase64 } from "@/utils/utilities";
 import { deleteProductImage } from "@/utils/deleteProductImage";

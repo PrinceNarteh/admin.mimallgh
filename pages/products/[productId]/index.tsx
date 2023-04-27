@@ -1,5 +1,5 @@
 import { Back, Card } from "@/components";
-import { Product } from "@/types/product";
+import { Product } from "@/types";
 import { capitalize } from "@/utils/utilities";
 import Image from "next/image";
 import Link from "next/link";
