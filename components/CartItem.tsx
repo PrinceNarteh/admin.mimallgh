@@ -3,7 +3,7 @@ import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import productOne from "../../assets/images/product-1.jpg";
 
-const CartItem = () => {
+export const CartItem = () => {
   return (
     <div className="flex h-28 w-full rounded bg-gray-300">
       <div className="relative w-24 shrink-0">
@@ -28,5 +28,3 @@ const CartItem = () => {
     </div>
   );
 };
-
-export default CartItem;

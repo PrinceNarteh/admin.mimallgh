@@ -14,7 +14,7 @@ import Loader from "./Loader";
 
 const levels = ["level_one", "level_two", "level_three", "super_user"];
 
-const AdminForm = () => {
+export const AdminForm = () => {
   const router = useRouter();
   const {
     register,
@@ -255,5 +255,3 @@ const AdminForm = () => {
     </div>
   );
 };
-
-export default AdminForm;

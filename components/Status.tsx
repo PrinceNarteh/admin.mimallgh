@@ -5,7 +5,7 @@ interface IStatus {
   children: React.ReactNode;
 }
 
-const Status = ({ variant = "success", children }: IStatus) => {
+export const Status = ({ variant = "success", children }: IStatus) => {
   let color = "";
 
   switch (variant) {
@@ -31,5 +31,3 @@ const Status = ({ variant = "success", children }: IStatus) => {
     </span>
   );
 };
-
-export default Status;

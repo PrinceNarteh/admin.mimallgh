@@ -2,7 +2,7 @@ import React from "react";
 import { BiSearch } from "react-icons/bi";
 import { useRouter } from "next/router";
 
-const OrderListTable = () => {
+export const OrderListTable = () => {
   const router = useRouter();
 
   return (
@@ -99,5 +99,3 @@ const OrderListTable = () => {
     </div>
   );
 };
-
-export default OrderListTable;

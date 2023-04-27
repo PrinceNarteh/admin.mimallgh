@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { MdArrowBackIosNew } from "react-icons/md";
 
-const Back = () => {
+export const Back = () => {
   const router = useRouter();
 
   return (
@@ -13,5 +13,3 @@ const Back = () => {
     </div>
   );
 };
-
-export default Back;

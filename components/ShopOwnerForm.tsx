@@ -30,7 +30,7 @@ const initialState: IShopOwner = {
   role: "SHOP_OWNER",
 };
 
-const ShopOwnerForm = () => {
+export const ShopOwnerForm = () => {
   const router = useRouter();
   const {
     register,
@@ -206,5 +206,3 @@ const ShopOwnerForm = () => {
     </div>
   );
 };
-
-export default ShopOwnerForm;

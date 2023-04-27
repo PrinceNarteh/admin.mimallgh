@@ -7,7 +7,7 @@ interface IHeader {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Header = ({ open, setOpen }: IHeader) => {
+export const Header = ({ open, setOpen }: IHeader) => {
   return (
     <div
       className={`sticky top-0 z-50 flex justify-between bg-dark-gray px-5 py-2 duration-300`}
@@ -34,5 +34,3 @@ const Header = ({ open, setOpen }: IHeader) => {
     </div>
   );
 };
-
-export default Header;

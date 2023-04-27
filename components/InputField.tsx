@@ -17,7 +17,7 @@ type IInputField<TFormValues> = {
   validationSchema?: RegisterOptions;
 };
 
-const InputField = ({
+export const InputField = ({
   name,
   label,
   register,
@@ -46,4 +46,3 @@ const InputField = ({
     )}
   </div>
 );
-export default InputField;

@@ -6,7 +6,7 @@ interface ICard {
   children: React.ReactNode;
 }
 
-const Card = ({ heading, children }: ICard) => {
+export const Card = ({ heading, children }: ICard) => {
   return (
     <div className="bg-light-gray p-5">
       <div className="relative mb-3">
@@ -42,5 +42,3 @@ function CardItem({ children }: { children: React.ReactNode }) {
     </li>
   );
 }
-
-export default Card;

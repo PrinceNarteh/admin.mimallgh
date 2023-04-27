@@ -5,7 +5,7 @@ import React from "react";
 import apple from "../../assets/images/red-apple.png";
 import user from "../../assets/images/user-1.jpg";
 
-const OrderDetails = () => {
+export const OrderDetails = () => {
   return (
     <div className="mx-auto max-w-7xl">
       <h3 className="my-5 text-3xl font-semibold">Order #80249</h3>
@@ -175,5 +175,3 @@ const OrderDetails = () => {
     </div>
   );
 };
-
-export default OrderDetails;

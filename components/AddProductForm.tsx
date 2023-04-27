@@ -56,7 +56,7 @@ const initialValues: IAdminCreateProductDto = {
   images: [],
 };
 
-const AdminAddProductForm = () => {
+export const AdminAddProductForm = () => {
   const {
     query: { productId },
     push,

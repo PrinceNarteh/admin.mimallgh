@@ -6,7 +6,7 @@ interface IModal {
   onDialog: (choose: boolean) => void;
 }
 
-const Modal = ({ message, onDialog }: IModal) => {
+export const Modal = ({ message, onDialog }: IModal) => {
   return (
     <div className="absolute inset-0 grid place-content-center bg-gray-800/80">
       <div className="w-full max-w-sm rounded-md bg-gray-900 py-5 px-10">
@@ -28,5 +28,3 @@ const Modal = ({ message, onDialog }: IModal) => {
     </div>
   );
 };
-
-export default Modal;

@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { FiInstagram } from "react-icons/fi";
@@ -37,7 +36,7 @@ const initialState: IUpdateShopDto = {
   branches: [],
 };
 
-const AddShopForm = () => {
+export const AddShopForm = () => {
   const router = useRouter();
   const { data, isLoading } = api.shops.getShopById.useQuery({
     shopId: router.query.shopId as string,
@@ -299,5 +298,3 @@ const AddShopForm = () => {
     </div>
   );
 };
-
-export default AddShopForm;
