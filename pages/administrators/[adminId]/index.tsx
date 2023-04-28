@@ -3,52 +3,24 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { HiOutlineTrash } from "react-icons/hi";
-import Back from "../../../components/Back";
 
-import { Button } from "../../../components/Button";
-import Card from "../../../components/Card";
-import Modal from "../../../components/Modal";
-import { api } from "../../../utils/api";
-import { mapLevelToText } from "../../../utils/mapper";
-import Loader from "../../../components/Loader";
+import { Back, Button, Card, Modal, Loader } from "@/components";
+import { User } from "@/types";
 
-const AdministratorDetails = () => {
+const AdministratorDetails = ({ admin }: { admin: User }) => {
   const {
     query: { adminId },
     push,
   } = useRouter();
   const [openDialog, setOpenDialog] = useState(false);
-  const deleteUser = api.users.deleteUser.useMutation();
-
-  if (!adminId) {
-    push(`/administrators`).catch((error) => console.log(error));
-  }
-
-  const { data, isLoading } = api.users.getUserById.useQuery({
-    id: adminId as string,
-  });
 
   const handleDelete = () => setOpenDialog(true);
 
   function confirmDelete(choose: boolean) {
     if (choose) {
-      deleteUser.mutate(
-        { id: adminId as string },
-        {
-          onSuccess: () => {
-            toast.success("Admin deleted successfully!");
-            setOpenDialog(false);
-            push(`/administrators`).catch((error) => console.log(error));
-          },
-        }
-      );
     } else {
       setOpenDialog(false);
     }
-  }
-
-  if (isLoading) {
-    return <Loader />;
   }
 
   return (
@@ -58,35 +30,28 @@ const AdministratorDetails = () => {
         <Card heading="Administrator Details">
           <DetailItem
             label="Name"
-            value={`${data?.firstName || ""} ${data?.middleName || ""} ${
-              data?.lastName || ""
+            value={`${admin?.firstName || ""} ${admin?.middleName || ""} ${
+              admin?.lastName || ""
             }`}
             dark
           />
-          <DetailItem label="Shop Name" value={`${data?.lastName || ""}`} />
-          <DetailItem label="Email" value={`${data?.email || ""}`} dark />
+          <DetailItem label="Shop Name" value={`${admin?.lastName || ""}`} />
+          <DetailItem label="Email" value={`${admin?.email || ""}`} dark />
           <DetailItem
             label="Phone Number"
-            value={`${data?.phoneNumber || ""}`}
+            value={`${admin?.phoneNumber || ""}`}
           />
-          <DetailItem label="Address" value={`${data?.address || ""}`} dark />
+          <DetailItem label="Address" value={`${admin?.address || ""}`} dark />
           <DetailItem
             label="Status"
-            value={`${data?.active ? "Active" : "Inactive"}`}
+            value={`${admin?.active ? "Active" : "Inactive"}`}
           />
-          <DetailItem
-            label="Date Joined"
-            value={`${data?.createdAt.toDateString() || ""}`}
-            dark
-          />
-          <DetailItem
-            label="Level"
-            value={mapLevelToText((data?.level as string) || "")}
-          />
+          <DetailItem label="Date Joined" value={`${""}`} dark />
+          <DetailItem label="Level" value={admin?.level || ""} />
         </Card>
         <div className="flex items-center justify-end gap-5">
           <Link
-            href={`/administrators/${data?.id || ""}/edit`}
+            href={`/administrators/${admin?.id || ""}/edit`}
             className="link"
           >
             Edit
@@ -101,7 +66,9 @@ const AdministratorDetails = () => {
         <Modal
           onDialog={confirmDelete}
           message={
-            openDialog ? `${data?.firstName || ""} ${data?.lastName || ""}` : ""
+            openDialog
+              ? `${admin?.firstName || ""} ${admin?.lastName || ""}`
+              : ""
           }
         />
       ) : null}

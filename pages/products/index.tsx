@@ -1,9 +1,21 @@
-import { Card, Loader, Status } from "@/components";
+import { Card, Status } from "@/components";
+import { getProducts } from "@/services/products";
+import { Product } from "@/types";
 import { capitalize } from "@/utils/utilities";
+import { GetServerSideProps } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { BiSearch } from "react-icons/bi";
-import { Product } from "@/types";
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const data = await getProducts();
+
+  return {
+    props: {
+      shops: data,
+    },
+  };
+};
 
 const ProductList = ({ products }: { products: Product[] }) => {
   const router = useRouter();

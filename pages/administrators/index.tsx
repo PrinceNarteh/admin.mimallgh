@@ -4,6 +4,8 @@ import { Back, Loader } from "@/components";
 // import { mapLevelToText } from "@/utils/mapper";
 import { User } from "@/types";
 
+
+
 const AdministratorsList = ({ admins }: { admins: User[] }) => {
   const router = useRouter();
 

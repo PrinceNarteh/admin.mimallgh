@@ -1,7 +1,6 @@
-import AdminForm from "../../../components/AdminForm";
-import Back from "../../../components/Back";
+import { AdminForm, Back } from "@/components";
 
-const EditShopOwner = () => {
+const EditAdmin = () => {
   return (
     <div>
       <Back />
@@ -10,4 +9,4 @@ const EditShopOwner = () => {
   );
 };
 
-export default EditShopOwner;
+export default EditAdmin;

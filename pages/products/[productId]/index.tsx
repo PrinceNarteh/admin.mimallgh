@@ -1,4 +1,5 @@
 import { Back, Card } from "@/components";
+import { getProduct } from "@/services/products";
 import { Product } from "@/types";
 import { capitalize } from "@/utils/utilities";
 import { GetServerSideProps } from "next";
@@ -7,7 +8,7 @@ import Link from "next/link";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { productId } = context.query;
-  const data = await getAdmins(productId as string);
+  const data = await getProduct(productId as string);
 
   return {
     props: {

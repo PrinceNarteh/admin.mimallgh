@@ -1,5 +1,4 @@
-import AdminForm from "../../components/AdminForm";
-import Back from "../../components/Back";
+import { AdminForm, Back } from "@/components";
 
 const AddAdministrator = () => {
   return (
