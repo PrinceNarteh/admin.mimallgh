@@ -3,8 +3,18 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { Back, Loader } from "@/components";
 // import { mapLevelToText } from "@/utils/mapper";
 import { User } from "@/types";
+import { getAdmins } from "@/services/admins";
+import { GetServerSideProps } from "next";
 
+export const getServerSideProps: GetServerSideProps = async () => {
+  const data = await getAdmins();
 
+  return {
+    props: {
+      shops: data,
+    },
+  };
+};
 
 const AdministratorsList = ({ admins }: { admins: User[] }) => {
   const router = useRouter();

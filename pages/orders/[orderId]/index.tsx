@@ -1,5 +1,4 @@
-import Back from "../../../components/Back";
-import OrderDetails from "../../../components/OrderDetails";
+import { Back, OrderDetails } from "@/components";
 
 const OrderDetail = () => {
   return (
