@@ -44,3 +44,22 @@ export type Shop = {
   image: string;
   products: Product[];
 };
+
+export type User = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  address?: string;
+  phoneNumber: string;
+  alternateNumber?: string;
+  nationality?: string;
+  email: string;
+  image: string;
+  cardType?: string;
+  cardNumber?: string;
+  active?: boolean;
+  role: "admin" | "user" | "seller";
+  level: "level_one" | "level_two" | "level_three" | "super_user";
+  orders: [];
+};

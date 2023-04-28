@@ -44,6 +44,38 @@ export const createProductDto = z.object({
 });
 
 export type ICreateProduct = z.infer<typeof createProductDto>;
-
 export const updateProductDto = createProductDto.partial();
 export type IUpdateProduct = z.infer<typeof updateProductDto>;
+
+export const createShopDto = z.object({
+  id: z.union([z.undefined(), z.string().cuid2()]),
+  name: z
+    .string({ required_error: "Shop name is required" })
+    .min(1, "Shop name cannot be empty"),
+  location: z
+    .string({ required_error: "Location is required" })
+    .min(1, "Location cannot be empty"),
+  mapDirection: z.string(),
+  phoneNumber: z
+    .string({ required_error: "Phone number is required" })
+    .length(10, "Phone number must be 10 characters"),
+  description: z.string(),
+  openingTime: z.string(),
+  closingTime: z.string(),
+  facebookHandle: z.union([z.string(), z.null()]),
+  instagramHandle: z.union([z.string(), z.null()]),
+  whatsappNumber: z.union([z.string(), z.null()]),
+  branches: z.array(
+    z.object({
+      id: z.union([z.undefined(), z.string().cuid2()]),
+      shopId: z.union([z.undefined(), z.string().cuid2()]),
+      location: z.string({ required_error: "Location is required." }).min(1),
+      mapDirection: z
+        .string({ required_error: "Location is required." })
+        .min(1)
+        .optional(),
+      phoneNumber: z.string({ required_error: "Location is required." }).min(1),
+    })
+  ),
+});
+export type ICreateShop = z.infer<typeof createShopDto>;

@@ -1,22 +1,14 @@
 import { useRouter } from "next/router";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import Back from "../../components/Back";
-import { api } from "../../utils/api";
-import { mapLevelToText } from "../../utils/mapper";
-import Loader from "../../components/Loader";
+import { Back, Loader } from "@/components";
+// import { mapLevelToText } from "@/utils/mapper";
+import { User } from "@/types";
 
-const AdministratorsList = () => {
+const AdministratorsList = ({ admins }: { admins: User[] }) => {
   const router = useRouter();
-  const { data, isLoading } = api.users.getUsersByRole.useQuery({
-    role: "admin",
-  });
 
   const navigate = (adminId: string) =>
     router.push(`/administrators/${adminId}`);
-
-  if (isLoading) {
-    return <Loader />;
-  }
 
   return (
     <div>
@@ -38,7 +30,7 @@ const AdministratorsList = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.map((admin, idx) => (
+              {admins?.map((admin, idx) => (
                 <tr
                   className="cursor-pointer rounded bg-light-gray"
                   onClick={() => {
@@ -55,9 +47,7 @@ const AdministratorsList = () => {
                   } ${admin.lastName || ""}`}</td>
                   <td className="py-5 text-center">{admin.email}</td>
                   <td className="py-5 text-center">{admin.phoneNumber}</td>
-                  <td className="py-5 text-center">
-                    {mapLevelToText(admin.level)}
-                  </td>
+                  <td className="py-5 text-center">{admin.level}</td>
                   <td className="flex justify-center py-5">
                     <BsThreeDotsVertical />
                   </td>

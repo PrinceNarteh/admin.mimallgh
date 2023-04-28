@@ -1,11 +1,24 @@
-import Back from "../../../components/Back";
-import ShopForm from "../../../components/ShopForm";
+import { Back, ShopForm } from "@/components";
+import { getShop } from "@/services/shops";
+import { Shop } from "@/types";
+import { GetServerSideProps } from "next";
 
-const AddShop = () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { shopId } = context.query;
+  const data = await getShop(shopId as string);
+
+  return {
+    props: {
+      shop: data,
+    },
+  };
+};
+
+const AddShop = ({ shop }: { shop: Shop }) => {
   return (
     <div className="mx-auto max-w-4xl">
       <Back />
-      <ShopForm />
+      <ShopForm shop={shop} />
     </div>
   );
 };

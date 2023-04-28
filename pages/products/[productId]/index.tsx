@@ -1,8 +1,20 @@
 import { Back, Card } from "@/components";
 import { Product } from "@/types";
 import { capitalize } from "@/utils/utilities";
+import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { productId } = context.query;
+  const data = await getAdmins(productId as string);
+
+  return {
+    props: {
+      product: data,
+    },
+  };
+};
 
 const ProductDetails = ({ product }: { product: Product }) => {
   return (

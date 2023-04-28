@@ -5,21 +5,18 @@ import { toast } from "react-hot-toast";
 import { FiInstagram } from "react-icons/fi";
 import { ImFacebook2, ImWhatsapp } from "react-icons/im";
 
-import { locations } from "./../utils/menus";
-import {
-  createShopDto,
-  updateShopDto,
-  type IUpdateShopDto,
-} from "./../utils/validations";
-import { Button, Card, InputField, Loader, SearchFilter } from "./index";
-import SelectField from "./SelectField";
+import { createShop, updateShop } from "@/services/shops";
+import { Shop } from "@/types";
+import { locations } from "@/utils/menus";
+import { createShopDto, type ICreateShop } from "@/utils/validations";
+import { Button, Card, InputField, SelectField } from "./index";
+import axios from "@/lib/axios";
 
-const initialState: IUpdateShopDto = {
-  id: "",
-  ownerId: "",
+const initialState: ICreateShop = {
+  id: undefined,
   name: "",
   location: "",
-  address: "",
+  mapDirection: "",
   openingTime: "",
   closingTime: "",
   phoneNumber: "",
@@ -30,7 +27,16 @@ const initialState: IUpdateShopDto = {
   branches: [],
 };
 
-export const AddShopForm = () => {
+type IShop = Shop & {
+  branches: {
+    location: string;
+    phoneNumber: string;
+    id?: string | undefined;
+    mapDirection?: string | undefined;
+  }[];
+};
+
+export const ShopForm = ({ shop }: { shop?: any }) => {
   const router = useRouter();
 
   const {
@@ -41,56 +47,36 @@ export const AddShopForm = () => {
     control,
     handleSubmit,
   } = useForm({
-    defaultValues: initialState,
-    values: data as IUpdateShopDto,
-    resolver: zodResolver(router.query.shopId ? updateShopDto : createShopDto),
+    defaultValues: shop ? shop : initialState,
+    resolver: zodResolver(createShopDto),
   });
   const { fields, append, remove } = useFieldArray({
     name: "branches",
     control,
   });
 
-  const submitHandler: SubmitHandler<IUpdateShopDto> = (value) => {
-    if (!value.id) {
+  const submitHandler: SubmitHandler<ICreateShop> = async (value) => {
+    console.log("Called");
+    if (shop?.id) {
+      try {
+        const res = await updateShop(router.query.shopId as string, value);
+        console.log(res);
+        toast.success("Shop updated successfully");
+        router.push(`/shops/${res.data.id}`);
+      } catch (error) {
+        console.log(error);
+      }
     } else {
+      const res = await createShop(value);
+      toast.success("Shop created successfully");
+      router.push(`/shops/${res.data.id}`);
     }
   };
-
-  const owners = shopOwners?.data?.map((shopOwner) => ({
-    id: shopOwner.id || "",
-    label: `${shopOwner.firstName || ""} ${shopOwner.middleName || ""} ${
-      shopOwner.lastName || ""
-    }`,
-  }));
-
-  if (router.query.shopId && isLoading) {
-    return <Loader />;
-  }
 
   return (
     <div className="pb-10">
       <Card heading={`${getValues().id ? "Edit" : "Add"} Shop`}>
-        <form
-          className="w-full"
-          onSubmit={() => {
-            handleSubmit(submitHandler);
-          }}
-        >
-          <div className="my-2 w-full">
-            <label
-              htmlFor="shop_owner"
-              className="mb-1.5 block pl-2 capitalize tracking-widest"
-            >
-              Shop Owner
-            </label>
-            <SearchFilter
-              value={data?.ownerId || ""}
-              field="ownerId"
-              options={owners || []}
-              errors={errors}
-              setValue={setValue}
-            />
-          </div>
+        <form className="w-full" onSubmit={() => handleSubmit(submitHandler)}>
           <div className="flex flex-col gap-5 lg:flex-row">
             <InputField
               name="name"
@@ -109,8 +95,8 @@ export const AddShopForm = () => {
           </div>
           <div className="flex flex-col gap-5 lg:flex-row">
             <InputField
-              name="address"
-              label="Address"
+              name="mapDirection"
+              label="Map Direction"
               register={register}
               errors={errors}
               validationSchema={{ required: "Shop name is required" }}
@@ -251,9 +237,9 @@ export const AddShopForm = () => {
             <Button
               onClick={() =>
                 append({
-                  shopId: "",
                   id: "",
-                  address: "",
+                  shopId: "",
+                  mapDirection: "",
                   location: "",
                   phoneNumber: "",
                 })

@@ -1,5 +1,4 @@
-import Back from "../../components/Back";
-import ShopForm from "../../components/ShopForm";
+import { Back, ShopForm } from "@/components";
 
 const AddShop = () => {
   return (
