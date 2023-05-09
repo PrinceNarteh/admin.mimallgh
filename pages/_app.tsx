@@ -1,11 +1,11 @@
 import "@/styles/globals.css";
-import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
+import type { AppProps } from "next/app";
 
-import localFont from "next/font/local";
 import { Layout } from "@/components";
-import { Toaster } from "react-hot-toast";
+import localFont from "next/font/local";
 import { useRouter } from "next/router";
+import { Toaster } from "react-hot-toast";
 
 const poppins = localFont({
   src: [

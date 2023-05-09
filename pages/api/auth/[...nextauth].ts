@@ -7,7 +7,7 @@ export const authOptions: AuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        shopCode: {
+        emailOrPhoneNumber: {
           label: "Username",
           type: "text",
           placeholder: "jsmith",
@@ -15,12 +15,12 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        const { shopCode, password } = credentials as {
-          shopCode: string;
+        const { emailOrPhoneNumber, password } = credentials as {
+          emailOrPhoneNumber: string;
           password: string;
         };
 
-        let user = await login({ shopCode, password });
+        let user = await login({ emailOrPhoneNumber, password });
 
         if (user) {
           return user.data;
@@ -39,14 +39,13 @@ export const authOptions: AuthOptions = {
   },
   pages: {
     signIn: "/auth/login",
-    signOut: "/auth/signout",
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.shopCode = user.shopCode;
-        token.location = user.location;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
       }

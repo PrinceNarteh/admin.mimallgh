@@ -67,19 +67,20 @@ export const createShopDto = z.object({
   facebookHandle: z.union([z.string(), z.null()]),
   instagramHandle: z.union([z.string(), z.null()]),
   whatsappNumber: z.union([z.string(), z.null()]),
-  branches: z.array(
-    z.object({
-      id: z.union([z.undefined(), z.string().cuid2()]),
-      shopId: z.union([z.undefined(), z.string().cuid2()]),
-      location: z.string({ required_error: "Location is required." }).min(1),
-      mapDirection: z
-        .string({ required_error: "Location is required." })
-        .min(1)
-        .optional(),
-      phoneNumber: z.string({ required_error: "Location is required." }).min(1),
-    })
-  ),
 });
+
+// branches: z.array(
+//     z.object({
+//       id: z.union([z.undefined(), z.string().cuid2()]),
+//       shopId: z.union([z.undefined(), z.string().cuid2()]),
+//       location: z.string({ required_error: "Location is required." }).min(1),
+//       mapDirection: z
+//         .string({ required_error: "Location is required." })
+//         .min(1)
+//         .optional(),
+//       phoneNumber: z.string({ required_error: "Location is required." }).min(1),
+//     })
+//   ),
 export type ICreateShop = z.infer<typeof createShopDto>;
 
 // User

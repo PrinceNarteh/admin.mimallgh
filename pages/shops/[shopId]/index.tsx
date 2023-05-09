@@ -44,20 +44,40 @@ const ShopDetails = ({ shop }: { shop: Shop }) => {
             <div>{shop?.name}</div>
           </div>
           <div className="flex items-center justify-between py-4 px-4">
+            <div className="font-bold">Shop Code</div>
+            <div>{capitalize(shop?.shopCode || "")}</div>
+          </div>
+          <div className="flex items-center justify-between py-4 px-4 bg-dark-gray">
             <div className="font-bold">Location</div>
             <div>{capitalize(shop?.location || "")}</div>
           </div>
-          <div className="flex items-center justify-between bg-dark-gray py-4 px-4">
+          <div className="flex items-center justify-between py-4 px-4">
             <div className="font-bold">Map Direction</div>
             <div>{shop?.mapDirection || ""}</div>
           </div>
-          <div className="flex items-center justify-between py-4 px-4">
+          <div className="flex items-center justify-between py-4 px-4 bg-dark-gray">
             <div className="font-bold">Phone Number</div>
             <div>{shop?.phoneNumber || ""}</div>
           </div>
-          <div className="flex flex-col items-start bg-dark-gray py-4 px-4">
+          <div className="flex items-center justify-between py-4 px-4">
+            <div className="font-bold">Alternate Phone Number</div>
+            <div>{shop?.alternateNumber || ""}</div>
+          </div>
+          <div className="flex flex-col items-start bg-dark-gray py-4 px-4 ">
             <div className="mb-2 font-bold">Description</div>
             <div>{shop?.description || ""}</div>
+          </div>
+          <div className="flex flex-col items-start py-4 px-4">
+            <div className="mb-2 font-bold">Whatsapp Number</div>
+            <div>{shop?.whatsappNumber || ""}</div>
+          </div>
+          <div className="flex flex-col items-start bg-dark-gray py-4 px-4">
+            <div className="mb-2 font-bold">Facebook Handle</div>
+            <div>{shop?.instagramHandle || ""}</div>
+          </div>
+          <div className="flex flex-col items-start py-4 px-4">
+            <div className="mb-2 font-bold">Instagram Handle</div>
+            <div>{shop?.instagramHandle || ""}</div>
           </div>
         </Card>
 
@@ -101,5 +121,22 @@ const ShopDetails = ({ shop }: { shop: Shop }) => {
     </div>
   );
 };
+
+// id: string;
+//   name: string;
+//   shopCode: string;
+//   plainPassword: string;
+//   description: string;
+//   location: string;
+//   mapDirection: string;
+//   phoneNumber: string;
+//   alternateNumber?: string;
+//   whatsappNumber?: string;
+//   instagramHandle?: string;
+//   facebookHandle?: string;
+//   openingTime: string;
+//   closingTime: string;
+//   image: string;
+//   products: Product[];
 
 export default ShopDetails;

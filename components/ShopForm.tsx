@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
-import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { FiInstagram } from "react-icons/fi";
 import { ImFacebook2, ImWhatsapp } from "react-icons/im";
@@ -9,8 +9,8 @@ import { createShop, updateShop } from "@/services/shops";
 import { Shop } from "@/types";
 import { locations } from "@/utils/menus";
 import { createShopDto, type ICreateShop } from "@/utils/validations";
-import { Button, Card, InputField, SelectField } from "./index";
-import axios from "@/lib/axios";
+import { Button, Card, InputField, Loader, SelectField } from "./index";
+import Router from "next/router";
 
 const initialState: ICreateShop = {
   id: undefined,
@@ -24,7 +24,6 @@ const initialState: ICreateShop = {
   facebookHandle: "",
   instagramHandle: "",
   whatsappNumber: "",
-  branches: [],
 };
 
 type IShop = Shop & {
@@ -41,42 +40,42 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
 
   const {
     register,
-    formState: { errors },
+    formState: { errors, isLoading },
     getValues,
-    setValue,
-    control,
     handleSubmit,
   } = useForm({
     defaultValues: shop ? shop : initialState,
     resolver: zodResolver(createShopDto),
   });
-  const { fields, append, remove } = useFieldArray({
-    name: "branches",
-    control,
-  });
 
   const submitHandler: SubmitHandler<ICreateShop> = async (value) => {
-    console.log("Called");
     if (shop?.id) {
       try {
         const res = await updateShop(router.query.shopId as string, value);
         console.log(res);
         toast.success("Shop updated successfully");
-        router.push(`/shops/${res.data.id}`);
+        router.push(`/shops/${res.id}`);
       } catch (error) {
         console.log(error);
+        toast.error("Error updating shop");
       }
     } else {
-      const res = await createShop(value);
-      toast.success("Shop created successfully");
-      router.push(`/shops/${res.data.id}`);
+      try {
+        const res = await createShop(value);
+        toast.success("Shop created successfully");
+        router.push(`/shops/${res.id}`);
+      } catch (error) {
+        toast.error("Error updating shop");
+      }
     }
   };
+
+  if (isLoading) return <Loader />;
 
   return (
     <div className="pb-10">
       <Card heading={`${getValues().id ? "Edit" : "Add"} Shop`}>
-        <form className="w-full" onSubmit={() => handleSubmit(submitHandler)}>
+        <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
           <div className="flex flex-col gap-5 lg:flex-row">
             <InputField
               name="name"
@@ -188,7 +187,16 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
               </div>
             </div>
           </div>
-          <div className="my-5">
+
+          <Button>{`${getValues().id ? "Edit" : "Add"} Shop`}</Button>
+        </form>
+      </Card>
+    </div>
+  );
+};
+
+{
+  /* <div className="my-5">
             <h3>Branch(es)</h3>
           </div>
           {fields.map((field, index) => (
@@ -247,12 +255,5 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
             >
               Add Branch
             </Button>
-          </div>
-          <Button type="submit">
-            {`${getValues().id ? "Edit" : "Add"} Shop`}
-          </Button>
-        </form>
-      </Card>
-    </div>
-  );
-};
+          </div> */
+}

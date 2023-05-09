@@ -56,7 +56,7 @@ const Login = () => {
             type="text"
             placeholder="Shop Code"
             className="border border-gray-400 w-full p-3 rounded text-lg focus:border-2 outline-green-800 placeholder:italic"
-            {...register("shopCode")}
+            {...register("emailOrPhoneNumber")}
           />
           <input
             type="password"

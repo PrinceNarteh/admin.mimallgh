@@ -2,6 +2,8 @@ import { useState } from "react";
 import { SideBar } from "./SideBar";
 
 import { Header } from "./Header";
+import { Loader } from "./Loader";
+import { Router } from "next/router";
 
 interface IAdminLayout {
   children: React.ReactNode;
@@ -9,6 +11,14 @@ interface IAdminLayout {
 
 export const Layout = ({ children }: IAdminLayout) => {
   const [open, setOpen] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  Router.events.on("routeChangeStart", () => {
+    setLoading(true);
+  });
+  Router.events.on("routeChangeComplete", () => {
+    setLoading(false);
+  });
 
   return (
     <div>
@@ -20,6 +30,7 @@ export const Layout = ({ children }: IAdminLayout) => {
       >
         <Header open={open} setOpen={setOpen} />
         <div className="relative min-h-[calc(100vh_-_73px)]">
+          {loading && <Loader />}
           <div className="mt-5 px-4">{children}</div>
         </div>
       </div>
