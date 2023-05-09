@@ -2,14 +2,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 
-import { createAdminDto, updateAdminDto } from "@/utils/validations";
-import { Button, Card, InputField, Loader } from "./index";
-
+import { User } from "@/types";
 import { capitalize } from "@/utils/utilities";
+import { adminDto } from "@/utils/validations";
+import { Button, Card, InputField } from "./index";
 
 const levels = ["level_one", "level_two", "level_three", "super_user"];
 
-export const AdminForm = () => {
+export const AdminForm = ({ admin }: { admin?: User }) => {
   const router = useRouter();
   const {
     register,
@@ -17,25 +17,24 @@ export const AdminForm = () => {
     getValues,
     handleSubmit,
   } = useForm({
-    defaultValues: {
-      id: "",
-      firstName: "",
-      lastName: "",
-      middleName: "",
-      email: "",
-      address: "",
-      nationality: "",
-      cardType: "",
-      cardNumber: "",
-      phoneNumber: "",
-      alternateNumber: "",
-      password: "",
-      level: "",
-      role: "ADMIN",
-    },
-    resolver: zodResolver(
-      router.query.adminId ? updateAdminDto : createAdminDto
-    ),
+    defaultValues: admin
+      ? admin
+      : {
+          id: "",
+          firstName: "",
+          lastName: "",
+          middleName: "",
+          email: "",
+          address: "",
+          nationality: "",
+          cardType: "",
+          cardNumber: "",
+          phoneNumber: "",
+          alternateNumber: "",
+          level: "level_one",
+          role: "admin",
+        },
+    resolver: zodResolver(adminDto),
   });
 
   const submitHandler = async (data: any) => {
@@ -48,10 +47,6 @@ export const AdminForm = () => {
   levels.map((levels) => {
     console.log(levels === getValues().level.toLowerCase());
   });
-
-  if (router.query.adminId && isLoading) {
-    return <Loader />;
-  }
 
   return (
     <div className="mx-auto max-w-4xl pb-7">

@@ -14,6 +14,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const Shops = ({ shops }: { shops: Shop[] }) => {
+  console.log(shops);
   const router = useRouter();
 
   return (
@@ -30,7 +31,7 @@ const Shops = ({ shops }: { shops: Shop[] }) => {
             </tr>
           </thead>
           <tbody>
-            {shops?.map((shop, idx) => (
+            {/* {shops?.map((shop, idx) => (
               <tr
                 className="cursor-pointer rounded bg-light-gray"
                 onClick={() => {
@@ -45,7 +46,7 @@ const Shops = ({ shops }: { shops: Shop[] }) => {
                 <td className="py-5 text-center">{shop.location}</td>
                 <td className="py-5 text-center ">{shop.phoneNumber}</td>
               </tr>
-            ))}
+            ))} */}
           </tbody>
         </table>
       </div>

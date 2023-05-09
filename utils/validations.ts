@@ -4,6 +4,7 @@ export const IdDto = z.object({
   id: z.string({ required_error: "ID is required" }).cuid(),
 });
 
+// Product
 export const createProductDto = z.object({
   shopId: z.string().cuid2(),
   title: z.string(),
@@ -47,6 +48,7 @@ export type ICreateProduct = z.infer<typeof createProductDto>;
 export const updateProductDto = createProductDto.partial();
 export type IUpdateProduct = z.infer<typeof updateProductDto>;
 
+// Shop
 export const createShopDto = z.object({
   id: z.union([z.undefined(), z.string().cuid2()]),
   name: z
@@ -79,3 +81,51 @@ export const createShopDto = z.object({
   ),
 });
 export type ICreateShop = z.infer<typeof createShopDto>;
+
+// User
+export const adminDto = z
+  .object({
+    id: z.union([z.string().cuid2(), z.undefined()]),
+    firstName: z
+      .string({ required_error: "First name is required." })
+      .min(1, "First name cannot be empty"),
+    lastName: z
+      .string({ required_error: "Last name is required." })
+      .min(1, "Last name cannot be empty"),
+    middleName: z.string().optional(),
+    email: z.string({ required_error: "Email name is required." }).email(),
+    address: z
+      .string({ required_error: "Address is required." })
+      .min(1, "Address cannot be empty"),
+    cardType: z.enum(["ghana_card", "student_id", "voters_id"]).optional(),
+    cardNumber: z
+      .string({ required_error: "Card number is required" })
+      .min(1, "Card number cannot be empty")
+      .optional(),
+    phoneNumber: z
+      .string({ required_error: "Phone number is required." })
+      .length(10, "Phone number must be ten numbers"),
+    alternateNumber: z.string().optional(),
+    password: z
+      .string({ required_error: "Password name is required." })
+      .min(6, "Password should be six character or more"),
+    confirmPassword: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .optional(),
+    nationality: z.string({ required_error: "Nationality is required" }).min(1),
+    image: z.union([z.string(), z.undefined()]),
+    role: z
+      .enum(["user", "admin"], {
+        required_error: "Role is required",
+        invalid_type_error: "Invalid role value. Expect 'admin' | 'user'",
+      })
+      .default("admin"),
+    level: z
+      .enum(["level_one", "level_two", "level_three", "super_user"])
+      .default("level_one"),
+  })
+  .refine((val) => val?.password === val?.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });

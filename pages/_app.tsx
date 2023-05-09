@@ -2,12 +2,23 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 
-import { Poppins } from "next/font/google";
+import localFont from "next/font/local";
 import { Layout } from "@/components";
 import { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
 
-const poppins = Poppins({ subsets: ["latin"], weight: "500" });
+const poppins = localFont({
+  src: [
+    {
+      path: "../assets/fonts/Poppins-Regular.ttf",
+      weight: "400",
+    },
+    {
+      path: "../assets/fonts/Poppins-Bold.ttf",
+      weight: "700",
+    },
+  ],
+});
 
 export default function App({
   Component,
