@@ -8,15 +8,25 @@ import { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const data = await getAdmins();
+  console.log(data);
 
   return {
     props: {
-      shops: data,
+      admins: data,
     },
   };
 };
 
-const AdministratorsList = ({ admins }: { admins: User[] }) => {
+type IAdminProps = {
+  data: User[];
+  page: number;
+  perPage: number;
+  total: number;
+  totalPages: number;
+};
+
+const AdministratorsList = ({ admins }: { admins: IAdminProps }) => {
+  console.log(admins);
   const router = useRouter();
 
   const navigate = (adminId: string) =>
@@ -42,7 +52,7 @@ const AdministratorsList = ({ admins }: { admins: User[] }) => {
               </tr>
             </thead>
             <tbody>
-              {admins?.map((admin, idx) => (
+              {admins?.data.map((admin, idx) => (
                 <tr
                   className="cursor-pointer rounded bg-light-gray"
                   onClick={() => {
