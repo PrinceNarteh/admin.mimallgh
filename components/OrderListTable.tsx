@@ -1,98 +1,61 @@
-import React from "react";
-import { BiSearch } from "react-icons/bi";
+import { IOrder, Order } from "@/types/order";
+import calculatePrice from "@/utils/calculatePrice";
 import { useRouter } from "next/router";
+import React from "react";
 
-export const OrderListTable = () => {
+export const OrderListTable = ({ orders }: { orders: Order }) => {
+  console.log(orders);
   const router = useRouter();
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <div className=" flex justify-center">
-        <div className="flex items-center rounded-lg border p-2">
-          <input
-            className="bg-transparent outline-none"
-            type="search"
-            name=""
-            id=""
-            placeholder="Search order..."
-          />
-          <BiSearch className="text-3xl text-gray-500" />
-        </div>
-      </div>
-      <div className="w-full py-4 px-2">
-        <table className="w-full border-separate border-spacing-y-7">
-          <thead>
+    <div className="w-full">
+      <div className="w-full pb-4 px-2">
+        <table className="w-full border-separate border-spacing-y-4">
+          <thead className="bg-light-gray">
             <tr>
-              <th className="w-10">
-                <input type="checkbox" className="w-20" />
-              </th>
-              <th className=" w-20">No</th>
-              <th className=" w-40">Ref</th>
-              <th className=" w-40">Date</th>
-              <th className="">Customer</th>
-              <th className=" w-40">Status</th>
-              <th className=" w-20">Total</th>
-              <th className=" w-20">D</th>
+              <th className=" w-20 py-4">No</th>
+              <th className=" w-20 py-4">Order Id</th>
+              <th className="w-40 py-4">Customer</th>
+              <th className=" w-40 py-4">Date</th>
+              <th className=" w-40 py-4">Status</th>
+              <th className=" w-20 py-4 pr-5">Amount</th>
             </tr>
           </thead>
           <tbody>
-            <tr
-              className="cursor-pointer rounded bg-light-gray"
-              onClick={() => {
-                router
-                  .push(`/orders/${123}`)
-                  .catch((error) => console.log(error));
-              }}
-            >
-              <td className="text-center">
-                <input type="checkbox" />
-              </td>
-              <td className="py-5 text-center ">21</td>
-              <td className="py-5 text-center ">RAG12G</td>
-              <td className="py-5 text-center ">21 Jun 23</td>
-              <td className="py-5 text-center">John Doe</td>
-              <td className="py-5 text-center ">Paid</td>
-              <td className="py-5 text-center ">$1234.00</td>
-              <td className="py-5 text-center ">D</td>
-            </tr>
-            <tr
-              className="rounded bg-light-gray"
-              onClick={() => {
-                router
-                  .push(`/orders/${123}`)
-                  .catch((error) => console.log(error));
-              }}
-            >
-              <td className="text-center">
-                <input type="checkbox" />
-              </td>
-              <td className="py-5 text-center ">21</td>
-              <td className="py-5 text-center ">TAG19G</td>
-              <td className="py-5 text-center ">23 Jun 23</td>
-              <td className="py-5 text-center">Rose Smith</td>
-              <td className="py-5 text-center ">Paid</td>
-              <td className="py-5 text-center ">$2234.00</td>
-              <td className="py-5 text-center ">D</td>
-            </tr>
-            <tr
-              className="rounded bg-light-gray"
-              onClick={() => {
-                router
-                  .push(`/orders/${123}`)
-                  .catch((error) => console.log(error));
-              }}
-            >
-              <td className="text-center">
-                <input type="checkbox" />
-              </td>
-              <td className="py-5 text-center ">29</td>
-              <td className="py-5 text-center ">EAB12G</td>
-              <td className="py-5 text-center ">20 Jun 23</td>
-              <td className="py-5 text-center">Jane Doe</td>
-              <td className="py-5 text-center ">Paid</td>
-              <td className="py-5 text-center ">$1205.00</td>
-              <td className="py-5 text-center ">D</td>
-            </tr>
+            {orders?.data.map((order, idx) => (
+              <React.Fragment key={idx}>
+                <tr>
+                  <td colSpan={4} className="pl-5">
+                    {order.date}
+                  </td>
+                </tr>
+                {order.items.map((item, i) => (
+                  <tr
+                    key={i}
+                    onClick={() =>
+                      router.push(
+                        `/orders/${order.items[0].orders[0].order.id}`
+                      )
+                    }
+                    className="cursor-pointer rounded bg-light-gray"
+                  >
+                    <td className="py-5 text-center ">{i + 1}</td>
+                    <td className="py-5 text-center ">{item.orderId}</td>
+                    <td className="py-5 text-center">
+                      {/* {order.items[0].orderItems[0].shopName} */}
+                    </td>
+                    <td className="py-5 text-center ">
+                      {/* {item.orderItems[0].createdAt} */}
+                    </td>
+                    <td className="py-5 text-center ">{""}</td>
+                    <td className="py-5 pr-5 text-center">
+                      {JSON.stringify(item.orderItems)}
+                      {/* {JSON.stringify(calculatePrice(item.orderItems))} */}
+                    </td>
+                  </tr>
+                ))}
+              </React.Fragment>
+            ))}
           </tbody>
         </table>
       </div>

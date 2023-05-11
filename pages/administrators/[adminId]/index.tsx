@@ -6,8 +6,22 @@ import { HiOutlineTrash } from "react-icons/hi";
 
 import { Back, Button, Card, Modal, Loader } from "@/components";
 import { User } from "@/types";
+import { GetServerSideProps } from "next";
+import { getAdmin } from "@/services/admins";
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { adminId } = context.query;
+  const data = await getAdmin(adminId as string);
+
+  return {
+    props: {
+      admin: data,
+    },
+  };
+};
 
 const AdministratorDetails = ({ admin }: { admin: User }) => {
+  console.log(admin);
   const {
     query: { adminId },
     push,
