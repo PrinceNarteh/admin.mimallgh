@@ -1,11 +1,12 @@
-import { IOrder, Order } from "@/types/order";
+import { IOrder } from "@/types/order";
 import calculatePrice from "@/utils/calculatePrice";
 import { useRouter } from "next/router";
 import React from "react";
 
-export const OrderListTable = ({ orders }: { orders: Order }) => {
-  console.log(orders);
+export const OrderListTable = ({ orders }: { orders: IOrder | undefined }) => {
   const router = useRouter();
+
+  console.log(orders);
 
   return (
     <div className="w-full">
@@ -22,35 +23,33 @@ export const OrderListTable = ({ orders }: { orders: Order }) => {
             </tr>
           </thead>
           <tbody>
-            {orders?.data.map((order, idx) => (
+            {orders?.data?.map((order, idx) => (
               <React.Fragment key={idx}>
                 <tr>
                   <td colSpan={4} className="pl-5">
                     {order.date}
                   </td>
                 </tr>
-                {order.items.map((item, i) => (
+                {order?.orders?.map((item, i) => (
                   <tr
                     key={i}
                     onClick={() =>
                       router.push(
-                        `/orders/${order.items[0].orders[0].order.id}`
+                        `/orders/${order.orders[i].orderItems[0].order.id}`
                       )
                     }
-                    className="cursor-pointer rounded bg-light-gray"
+                    className="cursor-pointer rounded bg-light-gray hover:scale-105 duration-300"
                   >
                     <td className="py-5 text-center ">{i + 1}</td>
                     <td className="py-5 text-center ">{item.orderId}</td>
-                    <td className="py-5 text-center">
-                      {/* {order.items[0].orderItems[0].shopName} */}
-                    </td>
+                    <td className="py-5 text-center">{order.user}</td>
                     <td className="py-5 text-center ">
-                      {/* {item.orderItems[0].createdAt} */}
+                      {item.orders[0]?.createdAt}
                     </td>
                     <td className="py-5 text-center ">{""}</td>
                     <td className="py-5 pr-5 text-center">
-                      {JSON.stringify(item.orderItems)}
-                      {/* {JSON.stringify(calculatePrice(item.orderItems))} */}
+                      {calculatePrice(item.orders[0].items)}
+                      {/* {JSON.stringify(item.orders)} */}
                     </td>
                   </tr>
                 ))}

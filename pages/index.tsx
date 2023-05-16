@@ -1,8 +1,34 @@
-import React from "react";
-import { Card } from "@/components";
-import { AiOutlineRise, AiOutlineFall } from "react-icons/ai";
+import { Card, Loader, OrderListTable } from "@/components";
+import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
+import { IOrder } from "@/types/order";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import { AiOutlineFall, AiOutlineRise } from "react-icons/ai";
 
 const Home = () => {
+  const [orders, setOrders] = useState<IOrder>();
+  const axiosAuth = useAxiosAuth();
+  const [loading, setLoading] = useState(false);
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const { data } = await axiosAuth.get("/orders");
+        console.log(data);
+        setOrders(data);
+      } catch (error: any) {
+        toast.error("Error fetching data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [status, axiosAuth, session]);
+
+  if (loading) return <Loader />;
   return (
     <div>
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
@@ -40,111 +66,9 @@ const Home = () => {
           </div>
         </Card>
       </div>
-      <div className="mt-5">
-        <Card heading="Recent Orders">
-          <div className="overflow-auto">
-            <table className="w-full max-w-full">
-              <thead>
-                <tr className="text-left">
-                  <th className="w-20 px-2 py-4">No.</th>
-                  <th className="w-32 px-2 py-4">Status</th>
-                  <th className="max-w-xl px-2 py-4">Customer Name</th>
-                  <th className="w-40 px-2 py-4">Date</th>
-                  <th className="w-20 px-2 py-4">Total</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-500">
-                <tr>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    #00745
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    Pending
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    05-01-2023
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    $2,742.00
-                  </td>
-                </tr>
-                <tr>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    #00745
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    Pending
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    05-01-2023
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    $2,742.00
-                  </td>
-                </tr>
-                <tr>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    #00745
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    <span className="rounded-sm bg-blue-300 bg-opacity-30 p-1.5 text-xs font-medium uppercase tracking-wider text-blue-800">
-                      Pending
-                    </span>
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    05-01-2023
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    $2,742.00
-                  </td>
-                </tr>
-                <tr>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    #00745
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    Pending
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    05-01-2023
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    $2,742.00
-                  </td>
-                </tr>
-                <tr>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    #00745
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    Pending
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    05-01-2023
-                  </td>
-                  <td className="text-md whitespace-nowrap px-2 py-4">
-                    $2,742.00
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </Card>
+      <div className="mt-10 w-11/12 mx-auto">
+        <h3 className="text-xl font-semibold">Recent Orders</h3>
+        <OrderListTable orders={orders} />
       </div>
     </div>
   );
