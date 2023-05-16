@@ -38,15 +38,10 @@ export const AdminForm = ({ admin }: { admin?: User }) => {
   });
 
   const submitHandler = async (data: any) => {
-    console.log(data);
     if (!data.id) {
     } else {
     }
   };
-
-  levels.map((levels) => {
-    console.log(levels === getValues().level.toLowerCase());
-  });
 
   return (
     <div className="mx-auto max-w-4xl pb-7">

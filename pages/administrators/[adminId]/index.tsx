@@ -21,7 +21,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const AdministratorDetails = ({ admin }: { admin: User }) => {
-  console.log(admin);
   const {
     query: { adminId },
     push,

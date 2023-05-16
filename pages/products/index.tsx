@@ -12,16 +12,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      shops: data,
+      products: data,
     },
   };
 };
 
-const ProductList = ({ products }: { products: Product[] }) => {
+interface IPage {
+  page: number;
+  perPage: number;
+  total: number;
+  totalPages: number;
+  data: Product[];
+}
+
+const ProductList = ({ products }: { products: IPage }) => {
   const router = useRouter();
 
   const navigate = (productId: string) =>
-    router.push(`/products/${productId}`).catch((error) => console.log(error));
+    router.push(`/products/${productId}`).catch((_) => null);
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -38,9 +46,7 @@ const ProductList = ({ products }: { products: Product[] }) => {
         <table className="mt-5 w-full border-separate">
           <thead>
             <tr className="text-left text-xl">
-              <th className="w-14 pb-3 text-center">
-                <input type="checkbox" />
-              </th>
+              <th className="w-14 pb-3 text-center">NO.</th>
               <th className="px-2 pb-3">Product</th>
               <th className="w-40 px-2 pb-3 text-center">Category</th>
               <th className="w-40 px-2 pb-3 text-center">Stock</th>
@@ -49,7 +55,7 @@ const ProductList = ({ products }: { products: Product[] }) => {
           </thead>
 
           <tbody className="border-separate border-spacing-10 space-y-20">
-            {products?.map((product, idx) => (
+            {products?.data.map((product, idx) => (
               <tr
                 className={`${
                   idx % 2 === 0 ? "bg-gray-500 bg-opacity-20" : ""
@@ -59,24 +65,22 @@ const ProductList = ({ products }: { products: Product[] }) => {
                   navigate(product.id);
                 }}
               >
-                <td className="py-7 text-center">
-                  <input type="checkbox" name="" id="" />
-                </td>
+                <td className="py-7 text-center">{idx + 1}</td>
                 <td className="px-2">
                   <div className="flex items-center gap-5">
-                    <div className="relative flex h-12 w-12 items-center">
+                    <div className="relative flex-shrink-0 h-12 w-14 overflow-hidden">
                       <Image
                         src={product.images[0]?.secure_url as string}
                         style={{ objectFit: "cover" }}
                         alt={product.title}
-                        height="48"
-                        width="48"
+                        sizes="48,56"
+                        fill
                       />
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold">{product.title}</h3>
-                      <p className="text-md">
-                        ID: {idx + 1} | SKU: {idx}
+                      <p className="text-md line-clamp-1">
+                        {product.description}
                       </p>
                     </div>
                   </div>
@@ -91,7 +95,7 @@ const ProductList = ({ products }: { products: Product[] }) => {
                     product.stock === 0 ? "Out of" : `${product.stock} in`
                   } stock`}</Status>
                 </td>
-                <td className="px-2 text-center">10</td>
+                <td className="px-2 text-center">{product.price}</td>
               </tr>
             ))}
           </tbody>

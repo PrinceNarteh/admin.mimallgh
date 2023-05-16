@@ -52,11 +52,9 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
     if (shop?.id) {
       try {
         const res = await updateShop(router.query.shopId as string, value);
-        console.log(res);
         toast.success("Shop updated successfully");
         router.push(`/shops/${res.id}`);
       } catch (error) {
-        console.log(error);
         toast.error("Error updating shop");
       }
     } else {

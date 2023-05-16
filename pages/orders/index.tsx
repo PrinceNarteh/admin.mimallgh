@@ -29,9 +29,7 @@ const Orders = () => {
     }
   }, [status, axiosAuth, session]);
 
-  if (loading || !orders) return <Loader />;
-
-  console.log(orders);
+  if (loading) return <Loader />;
 
   return (
     <div className="w-11/12 mx-auto">

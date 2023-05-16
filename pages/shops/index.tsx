@@ -24,7 +24,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const Shops = ({ shops }: { shops: IShop }) => {
   const [data, setData] = useState(shops);
-  console.log(data);
   const router = useRouter();
 
   return (
@@ -45,9 +44,7 @@ const Shops = ({ shops }: { shops: IShop }) => {
               <tr
                 className="cursor-pointer rounded bg-light-gray"
                 onClick={() => {
-                  router
-                    .push(`/shops/${shop.id}`)
-                    .catch((error) => console.log(error));
+                  router.push(`/shops/${shop.id}`).catch((_) => null);
                 }}
                 key={idx}
               >
@@ -64,7 +61,5 @@ const Shops = ({ shops }: { shops: IShop }) => {
     </div>
   );
 };
-
-
 
 export default Shops;

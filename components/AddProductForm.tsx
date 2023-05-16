@@ -143,8 +143,6 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
         images: [...data.images, ...imagesArr],
       };
 
-      console.log(data.images);
-
       // if (productId) {
       //   const res = await axiosAuth.patch(`/products/${productId}`, newData);
       //   if (res.status === 200) {
@@ -162,14 +160,12 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
       //     toast.error("Error updating product");
       //   }
       // }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      return error.message;
     } finally {
       toast.dismiss(toastId);
     }
   };
-
-  console.log(errors);
 
   return (
     <div className="mx-auto max-w-4xl pb-5">

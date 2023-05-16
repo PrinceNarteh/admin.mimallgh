@@ -17,7 +17,6 @@ const Home = () => {
       setLoading(true);
       try {
         const { data } = await axiosAuth.get("/orders");
-        console.log(data);
         setOrders(data);
       } catch (error: any) {
         toast.error("Error fetching data");

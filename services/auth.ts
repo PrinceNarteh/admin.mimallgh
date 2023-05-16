@@ -4,7 +4,6 @@ export const login = async (data: {
   emailOrPhoneNumber: string;
   password: string;
 }) => {
-  console.log(data);
   try {
     const user = await axios.post("/auth/login-admin", data);
     return user;

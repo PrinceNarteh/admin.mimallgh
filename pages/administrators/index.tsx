@@ -8,7 +8,6 @@ import { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const data = await getAdmins();
-  console.log(data);
 
   return {
     props: {
@@ -26,7 +25,6 @@ type IAdminProps = {
 };
 
 const AdministratorsList = ({ admins }: { admins: IAdminProps }) => {
-  console.log(admins);
   const router = useRouter();
 
   const navigate = (adminId: string) =>
@@ -56,7 +54,7 @@ const AdministratorsList = ({ admins }: { admins: IAdminProps }) => {
                 <tr
                   className="cursor-pointer rounded bg-light-gray"
                   onClick={() => {
-                    navigate(admin.id).catch((error) => console.log(error));
+                    navigate(admin.id).catch((error) => null);
                   }}
                   key={idx}
                 >

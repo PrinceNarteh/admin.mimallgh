@@ -30,7 +30,6 @@ export const createShop = async (data: any) => {
 export const updateShop = async (shopId: string, data: any) => {
   try {
     const res = await axios.patch(`/shops/${shopId}`, data);
-    console.log(res);
     return res.data;
   } catch (error: any) {
     return error.message;
