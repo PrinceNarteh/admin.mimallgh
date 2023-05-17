@@ -29,7 +29,7 @@ const useAxiosAuth = () => {
           await refreshToken();
           prevRequest.headers[
             "Authorization"
-          ] = `Bearer ${session?.user.accessToken}`;
+          ] = `Bearer ${session?.user?.accessToken}`;
           return axiosAuth(prevRequest);
         }
         return Promise.reject(error);
