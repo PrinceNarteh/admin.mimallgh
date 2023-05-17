@@ -1,33 +1,20 @@
-import { Card, Loader, OrderListTable } from "@/components";
-import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
-import { IOrder } from "@/types/order";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { Card, OrderListTable } from "@/components";
+import { getOrders } from "@/services/orders";
+import { IOrders } from "@/types/order";
+import { GetServerSideProps } from "next";
 import { AiOutlineFall, AiOutlineRise } from "react-icons/ai";
 
-const Home = () => {
-  const [orders, setOrders] = useState<IOrder>();
-  const axiosAuth = useAxiosAuth();
-  const [loading, setLoading] = useState(false);
-  const { data: session, status } = useSession();
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const data = await getOrders();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const { data } = await axiosAuth.get("/orders");
-        setOrders(data);
-      } catch (error: any) {
-        toast.error("Error fetching data");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [status, axiosAuth, session]);
+  return {
+    props: {
+      orders: data,
+    },
+  };
+};
 
-  if (loading) return <Loader />;
+const Home = ({ orders }: { orders: IOrders }) => {
   return (
     <div>
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">

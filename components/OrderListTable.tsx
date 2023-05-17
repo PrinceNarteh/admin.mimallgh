@@ -1,11 +1,11 @@
-import { IOrder } from "@/types/order";
+import { IOrders } from "@/types/order";
 import calculatePrice from "@/utils/calculatePrice";
 import { useRouter } from "next/router";
 import React from "react";
+import { format } from "date-fns";
 
-export const OrderListTable = ({ orders }: { orders: IOrder | undefined }) => {
+export const OrderListTable = ({ orders }: { orders: IOrders }) => {
   const router = useRouter();
-
 
   return (
     <div className="w-full">
@@ -16,39 +16,37 @@ export const OrderListTable = ({ orders }: { orders: IOrder | undefined }) => {
               <th className=" w-20 py-4">No</th>
               <th className=" w-20 py-4">Order Id</th>
               <th className="w-40 py-4">Customer</th>
-              <th className=" w-40 py-4">Date</th>
+              <th className=" w-40 py-4">Time</th>
               <th className=" w-40 py-4">Status</th>
               <th className=" w-20 py-4 pr-5">Amount</th>
             </tr>
           </thead>
           <tbody>
-            {orders?.data?.map((order, idx) => (
+            {orders?.data?.map((data, idx) => (
               <React.Fragment key={idx}>
                 <tr>
                   <td colSpan={4} className="pl-5">
-                    {order.date}
+                    {data.date}
                   </td>
                 </tr>
-                {order?.orders?.map((item, i) => (
+                {data?.items?.map((order, i) => (
                   <tr
                     key={i}
-                    onClick={() =>
-                      router.push(
-                        `/orders/${order.orders[i].orderItems[0].order.id}`
-                      )
-                    }
-                    className="cursor-pointer rounded bg-light-gray hover:scale-105 duration-300"
+                    onClick={() => router.push(`/orders/${data.items[i].id}`)}
+                    className="cursor-pointer rounded bg-light-gray hover:scale-105 duration-500"
                   >
                     <td className="py-5 text-center ">{i + 1}</td>
-                    <td className="py-5 text-center ">{item.orderId}</td>
+                    <td className="py-5 text-center ">{order.orderId}</td>
                     <td className="py-5 text-center">{order.user}</td>
                     <td className="py-5 text-center ">
-                      {item.orders[0]?.createdAt}
+                      {format(
+                        new Date(order.orders[0].createdAt),
+                        "hh:mm aaaa"
+                      )}
                     </td>
                     <td className="py-5 text-center ">{""}</td>
                     <td className="py-5 pr-5 text-center">
-                      {calculatePrice(item.orders[0].items)}
-                      {/* {JSON.stringify(item.orders)} */}
+                      {calculatePrice(data.items[i].orders)}
                     </td>
                   </tr>
                 ))}

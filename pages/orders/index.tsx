@@ -1,36 +1,20 @@
-import { Loader, OrderListTable } from "@/components";
-import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
-import { Order } from "@/types/order";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { OrderListTable } from "@/components";
+import { getOrders } from "@/services/orders";
+import { IOrders } from "@/types/order";
+import { GetServerSideProps } from "next";
 import { BiSearch } from "react-icons/bi";
 
-const Orders = () => {
-  const [orders, setOrders] = useState<Order>();
-  const axiosAuth = useAxiosAuth();
-  const [loading, setLoading] = useState(false);
-  const { data: session, status } = useSession();
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const data = await getOrders();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const { data } = await axiosAuth.get("orders");
-        setOrders(data);
-      } catch (error: any) {
-        toast.error("Error fetching data");
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (status === "authenticated") {
-      fetchData();
-    }
-  }, [status, axiosAuth, session]);
+  return {
+    props: {
+      orders: data,
+    },
+  };
+};
 
-  if (loading) return <Loader />;
-
+const Orders = ({ orders }: { orders: IOrders }) => {
   return (
     <div className="w-11/12 mx-auto">
       <div className=" flex justify-center">
