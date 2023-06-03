@@ -1,18 +1,17 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
-import { FiInstagram } from "react-icons/fi";
-import { ImFacebook2, ImWhatsapp } from "react-icons/im";
-import axios from "@/lib/axios";
-import { Shop } from "@/types";
+import axios, { axiosAuth } from "@/lib/axios";
 import { locations } from "@/utils/menus";
 import { convertBase64, parseImageUrl } from "@/utils/utilities";
 import { createShopDto, type ICreateShop } from "@/utils/validations";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from "react-hot-toast";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import { Button, Card, InputField, Loader, SelectField } from "./index";
+import { FiInstagram } from "react-icons/fi";
+import { ImFacebook2, ImWhatsapp } from "react-icons/im";
+import { Button, Card, InputField, Loader, Modal, SelectField } from "./index";
 
 const initialState: ICreateShop = {
   id: undefined,
@@ -26,13 +25,18 @@ const initialState: ICreateShop = {
   facebookHandle: "",
   instagramHandle: "",
   whatsappNumber: "",
+  image: "",
+  banner: "",
 };
 
-export const ShopForm = ({ shop }: { shop?: any }) => {
+export const ShopForm = ({ shop: shopData }: { shop?: ICreateShop }) => {
+  const [shop, setShop] = useState(shopData);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [banner, setBanner] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string>("");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [active, setActive] = useState<"image" | "banner" | null>(null);
   const router = useRouter();
 
   const {
@@ -52,19 +56,38 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
     });
   };
 
-  const submitHandler = async (value: any) => {
-    console.log(value);
+  const handleDelete = () => setOpenDialog(true);
+
+  async function confirmDelete(choose: boolean) {
+    if (choose) {
+      let res = await axiosAuth.delete(`/shops/${active}/${shop?.id}`);
+
+      console.log(res.data);
+
+      if (res.status === 200) {
+        toast.success(res.data);
+        console.log(res.data);
+        setShop(res.data);
+      } else {
+        toast.error("Error deleting shop image");
+      }
+    } else {
+      setOpenDialog(false);
+    }
+  }
+
+  const submitHandler: SubmitHandler<ICreateShop> = async (value) => {
     const formData = new FormData();
     formData.append("closingTime", value.closingTime);
     formData.append("description", value.description);
-    formData.append("facebookHandle", value.facebookHandle);
-    formData.append("instagramHandle", value.instagramHandle);
+    formData.append("facebookHandle", value.facebookHandle as string);
+    formData.append("instagramHandle", value.instagramHandle as string);
     formData.append("location", value.location);
     formData.append("mapDirection", value.mapDirection);
     formData.append("name", value.name);
     formData.append("openingTime", value.openingTime);
     formData.append("phoneNumber", value.phoneNumber);
-    formData.append("whatsappNumber", value.whatsappNumber);
+    formData.append("whatsappNumber", value.whatsappNumber as string);
 
     if (value.id) formData.append("id", value.id);
     if (image) formData.append("image", image);
@@ -72,15 +95,11 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
 
     if (shop?.id) {
       try {
-        const res = await axios.patch(
-          `/shops/${router.query.shopId as string}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "form-data/multipart",
-            },
-          }
-        );
+        const res = await axios.patch(`/shops/${shop?.id}`, formData, {
+          headers: {
+            "Content-Type": "form-data/multipart",
+          },
+        });
         toast.success("Shop updated successfully");
         router.push(`/shops/${res.data.id}`);
       } catch (error) {
@@ -226,7 +245,10 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
                 <p className="mb-2 text-lg font-semibold">Shop Image</p>
                 <div className="relative">
                   <AiOutlineCloseCircle
-                    onClick={() => setImage(null)}
+                    onClick={() => {
+                      setActive("image");
+                      handleDelete();
+                    }}
                     className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
                   />
                   <Image
@@ -244,7 +266,10 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
                 <p className="mb-2 text-lg font-semibold">Shop Banner</p>
                 <div className="relative h-[300px] rounded">
                   <AiOutlineCloseCircle
-                    onClick={() => setImage(null)}
+                    onClick={() => {
+                      setActive("banner");
+                      handleDelete();
+                    }}
                     className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
                   />
                   <Image
@@ -258,7 +283,7 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
             ) : null}
           </div>
 
-          <div className="flex flex-col gap-5 md:flex-row">
+          <div className="flex flex-col gap-5 md:flex-row mt-5">
             <div className="basis-[300px]">
               <label
                 className="mb-2 block bg-light-gray pl-2 capitalize tracking-widest"
@@ -347,69 +372,12 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
           <Button>{`${getValues().id ? "Edit" : "Add"} Shop`}</Button>
         </form>
       </Card>
+      {openDialog ? (
+        <Modal
+          onDialog={confirmDelete}
+          message={openDialog ? `the shop ${active}` : ""}
+        />
+      ) : null}
     </div>
   );
 };
-
-{
-  /* <div className="my-5">
-            <h3>Branch(es)</h3>
-          </div>
-          {fields.map((field, index) => (
-            <fieldset
-              key={field.id}
-              className="my-5 rounded border border-gray-500 py-2 px-5"
-            >
-              <legend>Branch</legend>
-              <div>
-                <SelectField
-                  label="Location"
-                  options={locations}
-                  errors={errors}
-                  register={register}
-                  name={`branches.${index}.location`}
-                  validationSchema={{ required: "Location is required" }}
-                />
-              </div>
-              <div className="flex flex-col gap-5 lg:flex-row">
-                <InputField
-                  errors={errors}
-                  label="Address"
-                  register={register}
-                  name={`branches.${index}.address`}
-                  validationSchema={{ required: "Address is required" }}
-                />
-                <InputField
-                  errors={errors}
-                  label="Phone Number"
-                  register={register}
-                  name={`branches.${index}.phoneNumber`}
-                  validationSchema={{ required: "Phone number is required" }}
-                />
-              </div>
-              <div className="my-2 flex justify-end">
-                <button
-                  className="rounded bg-red-600 py-1 px-2 text-sm"
-                  onClick={() => remove(index)}
-                >
-                  Remove
-                </button>
-              </div>
-            </fieldset>
-          ))}
-          <div className="flex justify-end border-b border-b-gray-500">
-            <Button
-              onClick={() =>
-                append({
-                  id: "",
-                  shopId: "",
-                  mapDirection: "",
-                  location: "",
-                  phoneNumber: "",
-                })
-              }
-            >
-              Add Branch
-            </Button>
-          </div> */
-}

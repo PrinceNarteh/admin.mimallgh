@@ -64,6 +64,8 @@ export const createShopDto = z.object({
   description: z.string(),
   openingTime: z.string(),
   closingTime: z.string(),
+  image: z.union([z.string(), z.null()]),
+  banner: z.union([z.string(), z.null()]),
   facebookHandle: z.union([z.string(), z.null()]),
   instagramHandle: z.union([z.string(), z.null()]),
   whatsappNumber: z.union([z.string(), z.null()]),
@@ -115,7 +117,7 @@ export const adminDto = z
       .min(6, "Password must be at least 6 characters")
       .optional(),
     nationality: z.string({ required_error: "Nationality is required" }).min(1),
-    image: z.union([z.string(), z.undefined()]),
+    image: z.union([z.string(), z.null()]),
     role: z
       .enum(["user", "admin"], {
         required_error: "Role is required",

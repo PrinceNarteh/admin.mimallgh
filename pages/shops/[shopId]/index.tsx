@@ -77,20 +77,28 @@ const ShopDetails = ({ shop }: { shop: Shop }) => {
             <div className="mb-2 font-bold">Description</div>
             <div>{shop?.description || ""}</div>
           </div>
-          <div className="flex flex-col items-start py-4 px-4">
+          <div className="flex items-center justify-between py-4 px-4">
+            <div className="font-bold">Opening Time</div>
+            <div>{shop.openingTime || ""}</div>
+          </div>
+          <div className="flex items-center justify-between py-4 px-4 bg-dark-gray">
+            <div className="font-bold">Closing Time</div>
+            <div>{shop.closingTime || ""}</div>
+          </div>
+          <div className="flex items-center justify-between py-4 px-4 ">
             <div className="mb-2 font-bold">Whatsapp Number</div>
             <div>{shop?.whatsappNumber || ""}</div>
           </div>
-          <div className="flex flex-col items-start bg-dark-gray py-4 px-4">
+          <div className="flex items-center justify-between py-4 px-4 bg-dark-gray">
             <div className="mb-2 font-bold">Facebook Handle</div>
             <div>{shop?.instagramHandle || ""}</div>
           </div>
-          <div className="flex flex-col items-start py-4 px-4">
+          <div className="flex items-center justify-between py-4 px-4">
             <div className="mb-2 font-bold">Instagram Handle</div>
             <div>{shop?.instagramHandle || ""}</div>
           </div>
 
-          <div className="flex flex-col gap-5 md:flex-row">
+          <div className="flex flex-col gap-5 md:flex-row bg-dark-gray p-4">
             {shop.image ? (
               <div>
                 <p className="mb-2 text-lg font-semibold">Shop Image</p>
