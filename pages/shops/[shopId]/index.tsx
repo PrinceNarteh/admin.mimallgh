@@ -91,26 +91,31 @@ const ShopDetails = ({ shop }: { shop: Shop }) => {
           </div>
 
           <div className="flex flex-col gap-5 md:flex-row">
-            <div>
-              <p className="mb-2 text-lg font-semibold">Shop Image</p>
-              <Image
-                src={parseImageUrl(shop.image, "shops")}
-                width={200}
-                height={200}
-                alt=""
-              />
-            </div>
-            <div className="flex-1 ">
-              <p className="mb-2 text-lg font-semibold">Shop Banner</p>
-              <div className="relative h-[200px]">
+            {shop.image ? (
+              <div>
+                <p className="mb-2 text-lg font-semibold">Shop Image</p>
                 <Image
-                  src={parseImageUrl(shop.banner, "shops")}
-                  fill
+                  src={parseImageUrl(shop.image, "shops")}
+                  width={200}
+                  height={200}
                   alt=""
-                  style={{ objectFit: "cover" }}
+                  className="rounded-md"
                 />
               </div>
-            </div>
+            ) : null}
+            {shop.banner ? (
+              <div className="flex-1 ">
+                <p className="mb-2 text-lg font-semibold">Shop Banner</p>
+                <div className="relative h-[200px] rounded">
+                  <Image
+                    src={parseImageUrl(shop.banner, "shops")}
+                    fill
+                    alt=""
+                    className="rounded-md object-cover"
+                  />
+                </div>
+              </div>
+            ) : null}
           </div>
         </Card>
 

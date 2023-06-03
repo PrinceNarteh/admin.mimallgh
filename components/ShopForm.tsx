@@ -14,7 +14,7 @@ import Router from "next/router";
 import Image from "next/image";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { ChangeEvent, useEffect, useState } from "react";
-import { convertBase64 } from "@/utils/utilities";
+import { convertBase64, parseImageUrl } from "@/utils/utilities";
 
 const initialState: ICreateShop = {
   id: undefined,
@@ -56,7 +56,7 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
     resolver: zodResolver(createShopDto),
   });
 
-  const convertImage = (file: File, func: any) => {
+  const convertImage = (file: File | null, func: any) => {
     if (file === null) return;
     convertBase64(file).then((res) => {
       func(res);
@@ -161,7 +161,7 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
               </div>
             </div>
           </div>
-          <div className="mt-5">
+          <div className="my-5">
             <label htmlFor="">Social Media Handlers</label>
             <div className="mt-3 flex flex-col gap-5 lg:flex-row">
               <div className="relative w-full">
@@ -203,79 +203,127 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
             </div>
           </div>
 
-          <div className="">
-            <label
-              className="mb-2 block bg-light-gray pl-2 capitalize tracking-widest"
-              htmlFor="user_avatar"
-            >
-              Shop Image
-            </label>
-            <input
-              className="block w-full cursor-pointer rounded-lg border bg-dark-gray file:border-none file:bg-light-gray file:px-5 file:py-3 file:text-white"
-              aria-describedby="user_avatar_help"
-              id="user_avatar"
-              type="file"
-              onChange={(e) =>
-                setImage(e.target.files ? e.target.files[0] : null)
-              }
-              multiple
-              accept=".png, .jpg, .jpeg"
-            ></input>
-          </div>
-          <div className="flex gap-5 overflow-x-auto py-3">
-            <div className="relative h-32 w-32 shrink-0 rounded-md bg-slate-500">
-              <AiOutlineCloseCircle
-                onClick={() => setImage(null)}
-                className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
-              />
-              <div className="overflow-hidden">
-                <Image
-                  src={""}
-                  width="128"
-                  height="128"
-                  style={{ objectFit: "cover" }}
-                  alt=""
-                  className="rounded"
-                />
+          <div className="flex flex-col gap-5 md:flex-row">
+            {shop?.image ? (
+              <div>
+                <p className="mb-2 text-lg font-semibold">Shop Image</p>
+                <div className="relative">
+                  <AiOutlineCloseCircle
+                    onClick={() => setImage(null)}
+                    className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
+                  />
+                  <Image
+                    src={parseImageUrl(shop.image, "shops")}
+                    width={300}
+                    height={300}
+                    alt=""
+                    className="rounded-md"
+                  />
+                </div>
               </div>
-            </div>
+            ) : null}
+            {shop?.banner ? (
+              <div className="flex-1 ">
+                <p className="mb-2 text-lg font-semibold">Shop Banner</p>
+                <div className="relative h-[300px] rounded">
+                  <AiOutlineCloseCircle
+                    onClick={() => setImage(null)}
+                    className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
+                  />
+                  <Image
+                    src={parseImageUrl(shop.banner, "shops")}
+                    fill
+                    alt=""
+                    className="rounded-md object-cover"
+                  />
+                </div>
+              </div>
+            ) : null}
           </div>
 
-          <div className="">
-            <label
-              className="mb-2 block bg-light-gray pl-2 capitalize tracking-widest"
-              htmlFor="user_avatar"
-            >
-              Shop Banner
-            </label>
-            <input
-              className="block w-full cursor-pointer rounded-lg border bg-dark-gray file:border-none file:bg-light-gray file:px-5 file:py-3 file:text-white"
-              aria-describedby="user_avatar_help"
-              id="user_avatar"
-              type="file"
-              onChange={(e) =>
-                setBanner(e.target.files ? e.target.files[0] : null)
-              }
-              multiple
-              accept=".png, .jpg, .jpeg"
-            ></input>
-          </div>
-          <div className="flex gap-5 overflow-x-auto py-3">
-            <div className="relative h-32 w-32 shrink-0 rounded-md bg-slate-500">
-              <AiOutlineCloseCircle
-                onClick={() => setBanner(null)}
-                className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
-              />
-              <div className="overflow-hidden">
-                <Image
-                  src={""}
-                  width="128"
-                  height="128"
-                  style={{ objectFit: "cover" }}
-                  alt=""
-                  className="rounded"
-                />
-              </div>
+          <div className="flex flex-col gap-5 md:flex-row">
+            <div className="basis-[300px]">
+              <label
+                className="mb-2 block bg-light-gray pl-2 capitalize tracking-widest"
+                htmlFor="user_avatar"
+              >
+                Select Shop Image
+              </label>
+              <input
+                className="block w-full cursor-pointer rounded-lg border bg-dark-gray file:border-none file:bg-light-gray file:px-5 file:py-3 file:text-white"
+                aria-describedby="user_avatar_help"
+                id="user_avatar"
+                type="file"
+                onChange={(e) => {
+                  setImage(e.target.files ? e.target.files[0] : null);
+                  convertImage(
+                    e.target.files ? e.target.files[0] : null,
+                    setImagePreview
+                  );
+                }}
+                multiple
+                accept=".png, .jpg, .jpeg"
+              ></input>
+              {image ? (
+                <div className="flex gap-5 overflow-x-auto py-3">
+                  <div className="relative h-40 w-40 shrink-0 rounded-md bg-slate-500">
+                    <AiOutlineCloseCircle
+                      onClick={() => setImage(null)}
+                      className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
+                    />
+                    <div className="overflow-hidden">
+                      <Image
+                        src={imagePreview}
+                        fill
+                        alt=""
+                        className="rounded object-cover"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="flex-1 flex-col">
+              <label
+                className="mb-2 block bg-light-gray pl-2 capitalize tracking-widest"
+                htmlFor="user_avatar"
+              >
+                Select Shop Banner
+              </label>
+              <input
+                className="block w-full cursor-pointer rounded-lg border bg-dark-gray file:border-none file:bg-light-gray file:px-5 file:py-3 file:text-white"
+                aria-describedby="user_avatar_help"
+                id="user_avatar"
+                type="file"
+                onChange={(e) => {
+                  setBanner(e.target.files ? e.target.files[0] : null);
+                  convertImage(
+                    e.target.files ? e.target.files[0] : null,
+                    setBannerPreview
+                  );
+                }}
+                multiple
+                accept=".png, .jpg, .jpeg"
+              ></input>
+              {banner ? (
+                <div className="flex gap-5 overflow-x-auto py-3">
+                  <div className="relative h-40 w-40 shrink-0 rounded-md bg-slate-500">
+                    <AiOutlineCloseCircle
+                      onClick={() => setBanner(null)}
+                      className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
+                    />
+                    <div className="overflow-hidden">
+                      <Image
+                        src={bannerPreview}
+                        fill
+                        alt=""
+                        className="rounded object-cover"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
 
