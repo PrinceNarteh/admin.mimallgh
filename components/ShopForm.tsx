@@ -1,20 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { FiInstagram } from "react-icons/fi";
 import { ImFacebook2, ImWhatsapp } from "react-icons/im";
-
-import { createShop, updateShop } from "@/services/shops";
+import axios from "@/lib/axios";
 import { Shop } from "@/types";
 import { locations } from "@/utils/menus";
-import { createShopDto, type ICreateShop } from "@/utils/validations";
-import { Button, Card, InputField, Loader, SelectField } from "./index";
-import Router from "next/router";
-import Image from "next/image";
-import { AiOutlineCloseCircle } from "react-icons/ai";
-import { ChangeEvent, useEffect, useState } from "react";
 import { convertBase64, parseImageUrl } from "@/utils/utilities";
+import { createShopDto, type ICreateShop } from "@/utils/validations";
+import Image from "next/image";
+import { useState } from "react";
+import { AiOutlineCloseCircle } from "react-icons/ai";
+import { Button, Card, InputField, Loader, SelectField } from "./index";
 
 const initialState: ICreateShop = {
   id: undefined,
@@ -28,15 +26,6 @@ const initialState: ICreateShop = {
   facebookHandle: "",
   instagramHandle: "",
   whatsappNumber: "",
-};
-
-type IShop = Shop & {
-  branches: {
-    location: string;
-    phoneNumber: string;
-    id?: string | undefined;
-    mapDirection?: string | undefined;
-  }[];
 };
 
 export const ShopForm = ({ shop }: { shop?: any }) => {
@@ -63,23 +52,51 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
     });
   };
 
-  console.log(shop);
+  const submitHandler = async (value: any) => {
+    console.log(value);
+    const formData = new FormData();
+    formData.append("closingTime", value.closingTime);
+    formData.append("description", value.description);
+    formData.append("facebookHandle", value.facebookHandle);
+    formData.append("instagramHandle", value.instagramHandle);
+    formData.append("location", value.location);
+    formData.append("mapDirection", value.mapDirection);
+    formData.append("name", value.name);
+    formData.append("openingTime", value.openingTime);
+    formData.append("phoneNumber", value.phoneNumber);
+    formData.append("whatsappNumber", value.whatsappNumber);
 
-  const submitHandler: SubmitHandler<ICreateShop> = async (value) => {
+    if (value.id) formData.append("id", value.id);
+    if (image) formData.append("image", image);
+    if (banner) formData.append("banner", banner);
+
     if (shop?.id) {
       try {
-        const res = await updateShop(router.query.shopId as string, value);
+        const res = await axios.patch(
+          `/shops/${router.query.shopId as string}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "form-data/multipart",
+            },
+          }
+        );
         toast.success("Shop updated successfully");
-        router.push(`/shops/${res.id}`);
+        router.push(`/shops/${res.data.id}`);
       } catch (error) {
         toast.error("Error updating shop");
       }
     } else {
       try {
-        const res = await createShop(value);
+        const res = await axios.post("/shop-auth/register", formData, {
+          headers: {
+            "Content-Type": "form-data/multipart",
+          },
+        });
         toast.success("Shop created successfully");
-        router.push(`/shops/${res.id}`);
+        router.push(`/shops/${res.data.id}`);
       } catch (error) {
+        console.log(error);
         toast.error("Error updating shop");
       }
     }
