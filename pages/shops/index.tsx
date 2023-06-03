@@ -1,8 +1,13 @@
+import { Loader } from "@/components";
+import Pagination from "@/components/Pagination";
+import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
 import { getShops } from "@/services/shops";
 import { Shop } from "@/types";
+import { capitalize } from "@/utils/utilities";
 import { GetServerSideProps } from "next";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface IShop {
   total: number;
@@ -25,6 +30,74 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const Shops = ({ shops }: { shops: IShop }) => {
   const [data, setData] = useState(shops);
   const router = useRouter();
+  const { data: session, status } = useSession();
+
+  const [state, setState] = useState({
+    data: [],
+    page: 1,
+    perPage: 10,
+    total: 1,
+    totalPages: 1,
+  });
+  const [search, setSearch] = useState("");
+  const axiosAuth = useAxiosAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchData = async (page: number) => {
+    setIsLoading(true);
+    const res = await axiosAuth.get(`/shops?page=${page}&search=${search}`);
+    setState(res.data);
+    setIsLoading(false);
+  };
+
+  const handlePrev = async (page: number) => {
+    setIsLoading(true);
+    const res = await axiosAuth.get(`/shops?page=${page - 1}&search=${search}`);
+    setState(res.data);
+    setIsLoading(false);
+  };
+
+  const handleNext = async (page: number) => {
+    setIsLoading(true);
+    const res = await axiosAuth.get(`/shops?page=${page + 1}&search=${search}`);
+    setState(res.data);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      const res = await axiosAuth.get(
+        `/products?shopId=${session?.user?.id}&search=${search}&perPage=10`
+      );
+      setState(res.data);
+      setIsLoading(false);
+    };
+    if (search !== "") {
+      fetchData();
+    }
+  }, [search]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      const res = await axiosAuth.get(
+        `/products?shopId=${session?.user?.id}&page=1`
+      );
+      setState(res.data);
+      setIsLoading(false);
+    };
+    if (status === "authenticated") {
+      fetchData();
+    }
+  }, [status, axiosAuth, session]);
+
+  console.log(state);
+  console.log(shops);
+
+  const handleClick = (id: string) => router.push(`/products/${id}`);
+
+  if (isLoading) return <Loader />;
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -51,13 +124,23 @@ const Shops = ({ shops }: { shops: IShop }) => {
                 <td className="py-5 text-center ">{idx + 1}</td>
                 <td className="py-5 text-left">{shop.name}</td>
                 <td className="py-5 text-center">{shop.shopCode}</td>
-                <td className="py-5 text-center">{shop.location}</td>
+                <td className="py-5 text-center">
+                  {capitalize(shop.location)}
+                </td>
                 <td className="py-5 text-center ">{shop.phoneNumber}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      <Pagination
+        totalPages={state.totalPages}
+        perPage={state.perPage}
+        page={state.page}
+        handlePrev={handlePrev}
+        handleNext={handleNext}
+        fetchData={fetchData}
+      />
     </div>
   );
 };
