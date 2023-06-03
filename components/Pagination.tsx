@@ -55,6 +55,7 @@ interface IPagination {
 
 const Pagination = (props: IPagination) => {
   const { handleNext, handlePrev, totalPages, fetchData, page } = props;
+  console.log(page);
 
   return (
     <nav aria-label="" className="py-5">

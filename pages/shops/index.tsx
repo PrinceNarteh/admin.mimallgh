@@ -28,17 +28,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const Shops = ({ shops }: { shops: IShop }) => {
-  const [data, setData] = useState(shops);
+  const [state, setState] = useState(shops);
   const router = useRouter();
-  const { data: session, status } = useSession();
-
-  const [state, setState] = useState({
-    data: [],
-    page: 1,
-    perPage: 10,
-    total: 1,
-    totalPages: 1,
-  });
   const [search, setSearch] = useState("");
   const axiosAuth = useAxiosAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -67,9 +58,7 @@ const Shops = ({ shops }: { shops: IShop }) => {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const res = await axiosAuth.get(
-        `/products?shopId=${session?.user?.id}&search=${search}&perPage=10`
-      );
+      const res = await axiosAuth.get(`/products?search=${search}&perPage=10`);
       setState(res.data);
       setIsLoading(false);
     };
@@ -78,24 +67,8 @@ const Shops = ({ shops }: { shops: IShop }) => {
     }
   }, [search]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      const res = await axiosAuth.get(
-        `/products?shopId=${session?.user?.id}&page=1`
-      );
-      setState(res.data);
-      setIsLoading(false);
-    };
-    if (status === "authenticated") {
-      fetchData();
-    }
-  }, [status, axiosAuth, session]);
-
   console.log(state);
   console.log(shops);
-
-  const handleClick = (id: string) => router.push(`/products/${id}`);
 
   if (isLoading) return <Loader />;
 
@@ -113,7 +86,7 @@ const Shops = ({ shops }: { shops: IShop }) => {
             </tr>
           </thead>
           <tbody>
-            {data?.data.map((shop, idx) => (
+            {state?.data.map((shop, idx) => (
               <tr
                 className="cursor-pointer rounded bg-light-gray"
                 onClick={() => {
@@ -125,7 +98,7 @@ const Shops = ({ shops }: { shops: IShop }) => {
                 <td className="py-5 text-left">{shop.name}</td>
                 <td className="py-5 text-center">{shop.shopCode}</td>
                 <td className="py-5 text-center">
-                  {capitalize(shop.location)}
+                  {shop.location ? capitalize(shop.location) : ""}
                 </td>
                 <td className="py-5 text-center ">{shop.phoneNumber}</td>
               </tr>
