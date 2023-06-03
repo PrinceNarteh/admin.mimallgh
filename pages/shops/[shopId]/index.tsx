@@ -4,11 +4,12 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 import { Back, Button, Card, Modal, Loader } from "@/components";
-import { capitalize } from "@/utils/utilities";
+import { capitalize, parseImageUrl } from "@/utils/utilities";
 import { Shop } from "@/types";
 import { GetServerSideProps } from "next";
 import { getShop } from "@/services/shops";
 import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
+import Image from "next/image";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { shopId } = context.query;
@@ -87,6 +88,29 @@ const ShopDetails = ({ shop }: { shop: Shop }) => {
           <div className="flex flex-col items-start py-4 px-4">
             <div className="mb-2 font-bold">Instagram Handle</div>
             <div>{shop?.instagramHandle || ""}</div>
+          </div>
+
+          <div className="flex flex-col gap-5 md:flex-row">
+            <div>
+              <p className="mb-2 text-lg font-semibold">Shop Image</p>
+              <Image
+                src={parseImageUrl(shop.image, "shops")}
+                width={200}
+                height={200}
+                alt=""
+              />
+            </div>
+            <div className="flex-1 ">
+              <p className="mb-2 text-lg font-semibold">Shop Banner</p>
+              <div className="relative h-[200px]">
+                <Image
+                  src={parseImageUrl(shop.banner, "shops")}
+                  fill
+                  alt=""
+                  style={{ objectFit: "cover" }}
+                />
+              </div>
+            </div>
           </div>
         </Card>
 

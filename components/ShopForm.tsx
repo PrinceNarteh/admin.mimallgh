@@ -11,6 +11,10 @@ import { locations } from "@/utils/menus";
 import { createShopDto, type ICreateShop } from "@/utils/validations";
 import { Button, Card, InputField, Loader, SelectField } from "./index";
 import Router from "next/router";
+import Image from "next/image";
+import { AiOutlineCloseCircle } from "react-icons/ai";
+import { ChangeEvent, useEffect, useState } from "react";
+import { convertBase64 } from "@/utils/utilities";
 
 const initialState: ICreateShop = {
   id: undefined,
@@ -36,6 +40,10 @@ type IShop = Shop & {
 };
 
 export const ShopForm = ({ shop }: { shop?: any }) => {
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [banner, setBanner] = useState<File | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string>("");
   const router = useRouter();
 
   const {
@@ -47,6 +55,15 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
     defaultValues: shop ? shop : initialState,
     resolver: zodResolver(createShopDto),
   });
+
+  const convertImage = (file: File, func: any) => {
+    if (file === null) return;
+    convertBase64(file).then((res) => {
+      func(res);
+    });
+  };
+
+  console.log(shop);
 
   const submitHandler: SubmitHandler<ICreateShop> = async (value) => {
     if (shop?.id) {
@@ -186,7 +203,81 @@ export const ShopForm = ({ shop }: { shop?: any }) => {
             </div>
           </div>
 
-          
+          <div className="">
+            <label
+              className="mb-2 block bg-light-gray pl-2 capitalize tracking-widest"
+              htmlFor="user_avatar"
+            >
+              Shop Image
+            </label>
+            <input
+              className="block w-full cursor-pointer rounded-lg border bg-dark-gray file:border-none file:bg-light-gray file:px-5 file:py-3 file:text-white"
+              aria-describedby="user_avatar_help"
+              id="user_avatar"
+              type="file"
+              onChange={(e) =>
+                setImage(e.target.files ? e.target.files[0] : null)
+              }
+              multiple
+              accept=".png, .jpg, .jpeg"
+            ></input>
+          </div>
+          <div className="flex gap-5 overflow-x-auto py-3">
+            <div className="relative h-32 w-32 shrink-0 rounded-md bg-slate-500">
+              <AiOutlineCloseCircle
+                onClick={() => setImage(null)}
+                className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
+              />
+              <div className="overflow-hidden">
+                <Image
+                  src={""}
+                  width="128"
+                  height="128"
+                  style={{ objectFit: "cover" }}
+                  alt=""
+                  className="rounded"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="">
+            <label
+              className="mb-2 block bg-light-gray pl-2 capitalize tracking-widest"
+              htmlFor="user_avatar"
+            >
+              Shop Banner
+            </label>
+            <input
+              className="block w-full cursor-pointer rounded-lg border bg-dark-gray file:border-none file:bg-light-gray file:px-5 file:py-3 file:text-white"
+              aria-describedby="user_avatar_help"
+              id="user_avatar"
+              type="file"
+              onChange={(e) =>
+                setBanner(e.target.files ? e.target.files[0] : null)
+              }
+              multiple
+              accept=".png, .jpg, .jpeg"
+            ></input>
+          </div>
+          <div className="flex gap-5 overflow-x-auto py-3">
+            <div className="relative h-32 w-32 shrink-0 rounded-md bg-slate-500">
+              <AiOutlineCloseCircle
+                onClick={() => setBanner(null)}
+                className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
+              />
+              <div className="overflow-hidden">
+                <Image
+                  src={""}
+                  width="128"
+                  height="128"
+                  style={{ objectFit: "cover" }}
+                  alt=""
+                  className="rounded"
+                />
+              </div>
+            </div>
+          </div>
 
           <Button>{`${getValues().id ? "Edit" : "Add"} Shop`}</Button>
         </form>

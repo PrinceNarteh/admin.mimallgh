@@ -42,6 +42,7 @@ export type Shop = {
   openingTime: string;
   closingTime: string;
   image: string;
+  banner: string;
   products: Product[];
 };
 
