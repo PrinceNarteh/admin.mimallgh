@@ -8,6 +8,7 @@ import { capitalize } from "@/utils/utilities";
 import { Shop } from "@/types";
 import { GetServerSideProps } from "next";
 import { getShop } from "@/services/shops";
+import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { shopId } = context.query;
@@ -23,12 +24,20 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const ShopDetails = ({ shop }: { shop: Shop }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const router = useRouter();
+  const axiosAuth = useAxiosAuth();
 
   const handleDelete = () => setOpenDialog(true);
 
-  function confirmDelete(choose: boolean) {
+  async function confirmDelete(choose: boolean) {
     if (choose) {
-      // delete shop
+      const res = await axiosAuth.delete(`/shops/${shop.id}`);
+
+      if (res.status === 200) {
+        toast.success(res.data);
+        router.push("/shops");
+      } else {
+        toast.error("Error deleting shop");
+      }
     } else {
       setOpenDialog(false);
     }
@@ -121,22 +130,5 @@ const ShopDetails = ({ shop }: { shop: Shop }) => {
     </div>
   );
 };
-
-// id: string;
-//   name: string;
-//   shopCode: string;
-//   plainPassword: string;
-//   description: string;
-//   location: string;
-//   mapDirection: string;
-//   phoneNumber: string;
-//   alternateNumber?: string;
-//   whatsappNumber?: string;
-//   instagramHandle?: string;
-//   facebookHandle?: string;
-//   openingTime: string;
-//   closingTime: string;
-//   image: string;
-//   products: Product[];
 
 export default ShopDetails;
