@@ -5,7 +5,6 @@ import { getShops } from "@/services/shops";
 import { Shop } from "@/types";
 import { capitalize } from "@/utils/utilities";
 import { GetServerSideProps } from "next";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
