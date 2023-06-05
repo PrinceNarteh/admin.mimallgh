@@ -29,8 +29,8 @@ const initialState: ICreateShop = {
   banner: "",
 };
 
-export const ShopForm = ({ shop: shopData }: { shop?: ICreateShop }) => {
-  const [shop, setShop] = useState(shopData);
+export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
+  const [shop, setShop] = useState<ICreateShop | undefined>(shopData);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [banner, setBanner] = useState<File | null>(null);
@@ -65,9 +65,9 @@ export const ShopForm = ({ shop: shopData }: { shop?: ICreateShop }) => {
       console.log(res.data);
 
       if (res.status === 200) {
-        toast.success(res.data);
-        console.log(res.data);
+        toast.success("Image deleted successfully");
         setShop(res.data);
+        setOpenDialog(false);
       } else {
         toast.error("Error deleting shop image");
       }
@@ -80,18 +80,20 @@ export const ShopForm = ({ shop: shopData }: { shop?: ICreateShop }) => {
     const formData = new FormData();
     formData.append("closingTime", value.closingTime);
     formData.append("description", value.description);
-    formData.append("facebookHandle", value.facebookHandle as string);
-    formData.append("instagramHandle", value.instagramHandle as string);
+    formData.append("facebookHandle", value.facebookHandle || "");
+    formData.append("instagramHandle", value.instagramHandle || "");
     formData.append("location", value.location);
     formData.append("mapDirection", value.mapDirection);
     formData.append("name", value.name);
     formData.append("openingTime", value.openingTime);
     formData.append("phoneNumber", value.phoneNumber);
-    formData.append("whatsappNumber", value.whatsappNumber as string);
+    formData.append("whatsappNumber", value.whatsappNumber || "");
+    formData.append("image", value.image as string);
+    formData.append("banner", value.banner as string);
 
     if (value.id) formData.append("id", value.id);
-    if (image) formData.append("image", image);
-    if (banner) formData.append("banner", banner);
+    if (image) formData.append("newImage", image);
+    if (banner) formData.append("newBanner", banner);
 
     if (shop?.id) {
       try {
@@ -116,7 +118,7 @@ export const ShopForm = ({ shop: shopData }: { shop?: ICreateShop }) => {
         router.push(`/shops/${res.data.id}`);
       } catch (error) {
         console.log(error);
-        toast.error("Error updating shop");
+        toast.error("Error creating shop");
       }
     }
   };
