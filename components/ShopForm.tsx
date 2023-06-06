@@ -12,6 +12,7 @@ import { AiOutlineCloseCircle } from "react-icons/ai";
 import { FiInstagram } from "react-icons/fi";
 import { ImFacebook2, ImWhatsapp } from "react-icons/im";
 import { Button, Card, InputField, Loader, Modal, SelectField } from "./index";
+import { data } from "autoprefixer";
 
 const initialState: ICreateShop = {
   id: undefined,
@@ -105,10 +106,12 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
         toast.success("Shop updated successfully");
         router.push(`/shops/${res.data.id}`);
       } catch (error) {
+        console.log(error);
         toast.error("Error updating shop");
       }
     } else {
       try {
+        console.log(value);
         const res = await axios.post("/shop-auth/register", formData, {
           headers: {
             "Content-Type": "form-data/multipart",

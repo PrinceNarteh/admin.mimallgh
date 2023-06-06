@@ -27,6 +27,8 @@ const ShopDetails = ({ shop }: { shop: Shop }) => {
   const router = useRouter();
   const axiosAuth = useAxiosAuth();
 
+  console.log(shop);
+
   const handleDelete = () => setOpenDialog(true);
 
   async function confirmDelete(choose: boolean) {
