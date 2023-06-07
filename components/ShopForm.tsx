@@ -92,17 +92,18 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
     formData.append("image", value.image as string);
     formData.append("banner", value.banner as string);
 
-    if (value.id) formData.append("id", value.id);
-    if (image) formData.append("newImage", image);
-    if (banner) formData.append("newBanner", banner);
-
     if (shop?.id) {
       try {
+        if (value.id) formData.append("id", value.id);
+        if (image) formData.append("newImage", image);
+        if (banner) formData.append("newBanner", banner);
+
         const res = await axios.patch(`/shops/${shop?.id}`, formData, {
           headers: {
             "Content-Type": "form-data/multipart",
           },
         });
+
         toast.success("Shop updated successfully");
         router.push(`/shops/${res.data.id}`);
       } catch (error) {
@@ -111,12 +112,12 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
       }
     } else {
       try {
-        console.log(value);
         const res = await axios.post("/shop-auth/register", formData, {
           headers: {
             "Content-Type": "form-data/multipart",
           },
         });
+
         toast.success("Shop created successfully");
         router.push(`/shops/${res.data.id}`);
       } catch (error) {
