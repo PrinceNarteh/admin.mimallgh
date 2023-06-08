@@ -59,6 +59,10 @@ const ShopDetails = ({ shop }: { shop: Shop }) => {
             <div className="font-bold">Shop Code</div>
             <div>{capitalize(shop?.shopCode || "")}</div>
           </div>
+          <div className="flex items-center justify-between py-4 px-4">
+            <div className="font-bold">Plain Password</div>
+            <div>{capitalize(shop?.plainPassword || "")}</div>
+          </div>
           <div className="flex items-center justify-between py-4 px-4 bg-dark-gray">
             <div className="font-bold">Location</div>
             <div>{capitalize(shop?.location || "")}</div>
