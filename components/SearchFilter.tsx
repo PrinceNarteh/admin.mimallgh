@@ -12,8 +12,8 @@ interface ISearchFilter {
     id: string;
     label: string;
   }[];
-  setValue: UseFormReturn["setValue"];
-  errors: Partial<FieldErrorsImpl<FieldErrors>>;
+  setValue: any;
+  errors: Partial<FieldErrorsImpl<any>>;
   field: string;
   value: string;
 }

@@ -1,5 +1,5 @@
 export const capitalize = (word: string) => {
-  if (word === "knh") return word.toUpperCase();
+  if (word === "knh_valco") return "KNH/Valco";
 
   return word
     .split("_")

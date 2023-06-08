@@ -1,5 +1,4 @@
 import { BsShop } from "react-icons/bs";
-import { FaUsers } from "react-icons/fa";
 import { FiShoppingBag } from "react-icons/fi";
 import { MdOutlineDashboard } from "react-icons/md";
 import { TiShoppingCart } from "react-icons/ti";
@@ -71,7 +70,7 @@ export const locations = [
   { label: "Apewosika", value: "apewosika" },
   { label: "Ayensu", value: "ayensu" },
   { label: "Duakro", value: "duakro" },
-  { label: "KNH", value: "knh" },
+  { label: "KNH/Valco", value: "knh_valco" },
   { label: "Kokoado", value: "kokoado" },
   { label: "Kwasipra", value: "kwasipra" },
   { label: "New Site", value: "new_site" },

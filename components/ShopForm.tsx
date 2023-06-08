@@ -5,13 +5,22 @@ import { createShopDto, type ICreateShop } from "@/utils/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { FiInstagram } from "react-icons/fi";
 import { ImFacebook2, ImWhatsapp } from "react-icons/im";
-import { Button, Card, InputField, Loader, Modal, SelectField } from "./index";
+import {
+  Button,
+  Card,
+  InputField,
+  Loader,
+  Modal,
+  SearchFilter,
+  SelectField,
+} from "./index";
+import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
 
 const initialState: ICreateShop = {
   id: undefined,
@@ -31,6 +40,7 @@ const initialState: ICreateShop = {
 
 export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
   const [shop, setShop] = useState<ICreateShop | undefined>(shopData);
+  const [shops, setShops] = useState([]);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [banner, setBanner] = useState<File | null>(null);
@@ -38,8 +48,10 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [active, setActive] = useState<"image" | "banner" | null>(null);
   const router = useRouter();
+  const axiosAuth = useAxiosAuth();
 
   const {
+    setValue,
     register,
     formState: { errors, isLoading },
     getValues,
@@ -126,12 +138,30 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
     }
   };
 
+  useEffect(() => {
+    let fetchData = () => {
+      axiosAuth.get("/shops").then((res) => {
+        setShops(res.data.data);
+      });
+    };
+    fetchData();
+  }, []);
+
   if (isLoading) return <Loader />;
+
+  console.log(shops);
 
   return (
     <div className="pb-10">
       <Card heading={`${getValues().id ? "Edit" : "Add"} Shop`}>
         <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
+          <SearchFilter
+            errors={errors}
+            field="shopId"
+            options={shops}
+            value=""
+            setValue={setValue}
+          />
           <div className="flex flex-col gap-5 lg:flex-row">
             <InputField
               name="name"
@@ -213,7 +243,7 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
                   type="text"
                   id="email-address-icon"
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  placeholder="Facebook"
+                  placeholder="Eg. https://wwww.facebook.com/username/"
                   {...register("facebookHandle")}
                 />
               </div>
@@ -225,7 +255,7 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
                   type="text"
                   id="email-address-icon"
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  placeholder="Instagram"
+                  placeholder="Eg. https://www.instagram.com/username/"
                   {...register("instagramHandle")}
                 />
               </div>
@@ -237,7 +267,7 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
                   type="text"
                   id="email-address-icon"
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 file:text-light-gray focus:border-blue-500  focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  placeholder="Whatsapp"
+                  placeholder="Eg. https://wa.me/0201234567"
                   {...register("whatsappNumber")}
                 />
               </div>
