@@ -1,10 +1,11 @@
 import { Back, Card } from "@/components";
 import { getProduct } from "@/services/products";
-import { Product } from "@/types";
-import { capitalize } from "@/utils/utilities";
+import { Product } from "@/types/products";
+import { capitalize, parseProductImageUrl } from "@/utils/utilities";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { productId } = context.query;
@@ -18,8 +19,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const ProductDetails = ({ product }: { product: Product }) => {
+  const [images, setImages] = useState(product.images);
+  const [active, setActive] = useState(0);
+
   return (
-    <div className="mx-auto w-11/12 space-y-3 pb-5">
+    <div className="mx-auto w-11/12 space-y-3 pb-5 py-10">
       <Back />
       <Card heading="Product Detail">
         <h3 className="mb-2 text-2xl font-semibold">{product?.title}</h3>
@@ -27,10 +31,10 @@ const ProductDetails = ({ product }: { product: Product }) => {
           <div className="col-span-5 space-y-3">
             <div className="relative h-[400px] bg-slate-500">
               <Image
-                src={product?.images[0]?.secure_url as string}
+                src={parseProductImageUrl(images[active].name)}
                 sizes="400"
                 fill
-                style={{ objectFit: "contain" }}
+                style={{ objectFit: "cover" }}
                 alt=""
                 priority
               />
@@ -39,13 +43,13 @@ const ProductDetails = ({ product }: { product: Product }) => {
               {product?.images.map((image, idx) => (
                 <div
                   key={idx}
-                  className="relative h-[100px] w-[100px] shrink-0"
+                  className="relative h-[100px] w-[100px] shrink-0 cursor-pointer"
+                  onClick={() => setActive(idx)}
                 >
                   <Image
-                    src={image.secure_url}
+                    src={parseProductImageUrl(image.name)}
                     fill
-                    sizes="100"
-                    style={{ objectFit: "contain" }}
+                    style={{ objectFit: "cover" }}
                     alt=""
                   />
                 </div>
@@ -65,7 +69,7 @@ const ProductDetails = ({ product }: { product: Product }) => {
               value={`${capitalize((product?.category as string) || "")}`}
               dark
             />
-            <Item label="Shop" value={`${""}`} />
+            <Item label="Shop" value={`${product?.shop.name || ""}`} />
             <div className={`bg-dark-gray py-4 px-4`}>
               <div className="mb-3 font-bold">Description</div>
               <div className="line-clamp-5">{product?.description || ""}</div>

@@ -34,8 +34,8 @@ const initialValues: ICreateProduct = {
   images: [],
 };
 
-export const AddProductForm = ({ product }: { product?: Product }) => {
-  const data = omit(product, ["shop", "createdAt", "updatedAt"]);
+export const AddProductForm = ({ product }: { product?: any }) => {
+  const data = omit(product, ["createdAt", "updatedAt"]);
   const {
     query: { productId },
     push,
@@ -49,7 +49,12 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
     getValues,
     handleSubmit,
   } = useForm<ICreateProduct>({
-    defaultValues: product ? data : initialValues,
+    defaultValues: product
+      ? {
+          shopId: product.shop.id,
+          ...data,
+        }
+      : initialValues,
   });
   const [shops, setShops] = useState<Shop[]>([]);
   const [images, setImages] = useState<File[]>([]);
@@ -204,7 +209,7 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
               errors={errors}
               field="shopId"
               options={shopList}
-              value="shopId"
+              value={getValues().shopId}
               setValue={setValue}
             />
           </div>

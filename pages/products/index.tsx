@@ -1,21 +1,13 @@
-import { Card, Status } from "@/components";
-import { getProducts } from "@/services/products";
-import { Product } from "@/types";
-import { capitalize } from "@/utils/utilities";
-import { GetServerSideProps } from "next";
+import { Card, Loader } from "@/components";
+import Pagination from "@/components/Pagination";
+import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
+import { Product } from "@/types/products";
+import { capitalize, parseProductImageUrl } from "@/utils/utilities";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 import { BiSearch } from "react-icons/bi";
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const data = await getProducts();
-
-  return {
-    props: {
-      products: data,
-    },
-  };
-};
 
 interface IPage {
   page: number;
@@ -25,23 +17,91 @@ interface IPage {
   data: Product[];
 }
 
-const ProductList = ({ products }: { products: IPage }) => {
+const ProductList = () => {
+  const [state, setState] = useState<IPage>({
+    data: [],
+    page: 1,
+    perPage: 10,
+    total: 1,
+    totalPages: 1,
+  });
+  const [search, setSearch] = useState("");
+  const axiosAuth = useAxiosAuth();
   const router = useRouter();
+  const { data: session, status } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = (productId: string) =>
-    router.push(`/products/${productId}`).catch((_) => null);
+  const fetchData = async (page: number) => {
+    setIsLoading(true);
+    const res = await axiosAuth.get(
+      `/products?shopId=${session?.user?.id}&page=${page}&search=${search}`
+    );
+    setState(res.data);
+    setIsLoading(false);
+  };
+
+  const handlePrev = async (page: number) => {
+    setIsLoading(true);
+    const res = await axiosAuth.get(
+      `/products?shopId=${session?.user?.id}&page=${page - 1}&search=${search}`
+    );
+    setState(res.data);
+    setIsLoading(false);
+  };
+
+  const handleNext = async (page: number) => {
+    setIsLoading(true);
+    const res = await axiosAuth.get(
+      `/products?shopId=${session?.user?.id}&page=${page + 1}&search=${search}`
+    );
+    setState(res.data);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      const res = await axiosAuth.get(
+        `/products?shopId=${session?.user?.id}&search=${search}&perPage=10`
+      );
+      setState(res.data);
+      setIsLoading(false);
+    };
+    if (search !== "") {
+      fetchData();
+    }
+  }, [search, axiosAuth, session?.user?.id]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      const res = await axiosAuth.get(`/products?page=1`);
+      setState(res.data);
+      setIsLoading(false);
+    };
+    if (status === "authenticated") {
+      fetchData();
+    }
+  }, [status, axiosAuth, session]);
+
+  const handleClick = (id: string) => router.push(`/products/${id}`);
+
+  if (isLoading) return <Loader />;
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div className="mx-auto max-w-7xl">
       <Card heading="Product List">
-        <div className="flex items-center rounded border border-gray-600 bg-light-gray px-2">
-          <BiSearch className="text-3xl text-gray-500" />
-          <input
-            type="search"
-            placeholder="Search for product"
-            className="w-full bg-transparent p-2  outline-none "
-          />
-        </div>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <div className="flex items-center rounded border border-gray-600 bg-light-gray px-2">
+            <BiSearch className="text-3xl text-gray-500" />
+            <input
+              type="search"
+              placeholder="Search for product"
+              className="w-full bg-transparent p-2  outline-none"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        </form>
 
         <table className="mt-5 w-full border-separate">
           <thead>
@@ -55,22 +115,24 @@ const ProductList = ({ products }: { products: IPage }) => {
           </thead>
 
           <tbody className="border-separate border-spacing-10 space-y-20">
-            {products?.data.map((product, idx) => (
+            {state.data.map((product, idx) => (
               <tr
                 className={`${
-                  idx % 2 === 0 ? "bg-gray-500 bg-opacity-20" : ""
+                  idx % 2 === 0 && "bg-gray-500 bg-opacity-20"
                 } cursor-pointer`}
-                key={product.id}
-                onClick={() => {
-                  navigate(product.id);
-                }}
+                key={idx}
+                onClick={() => handleClick(product.id)}
               >
-                <td className="py-7 text-center">{idx + 1}</td>
+                <td className="py-7 text-center">
+                  {state.page === 1
+                    ? state.page * (idx + 1)
+                    : state.page + (idx + 1).toString()}
+                </td>
                 <td className="px-2">
                   <div className="flex items-center gap-5">
                     <div className="relative flex-shrink-0 h-12 w-14 overflow-hidden">
                       <Image
-                        src={product.images[0]?.secure_url as string}
+                        src={parseProductImageUrl(product.images[0]?.name)}
                         style={{ objectFit: "cover" }}
                         alt={product.title}
                         sizes="48,56"
@@ -88,19 +150,23 @@ const ProductList = ({ products }: { products: IPage }) => {
                 <td className="px-2 text-center">
                   {capitalize(product.category)}
                 </td>
-                <td className="px-2 text-center">
-                  <Status
-                    variant={product.stock === 0 ? "danger" : "success"}
-                  >{`${
-                    product.stock === 0 ? "Out of" : `${product.stock} in`
-                  } stock`}</Status>
-                </td>
+                <td className="px-2 text-center">{product.stock} In Stock</td>
                 <td className="px-2 text-center">{product.price}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </Card>
+      <div className="flex justify-center">
+        <Pagination
+          page={state.page}
+          perPage={state.perPage}
+          totalPages={state.totalPages}
+          fetchData={fetchData}
+          handleNext={handleNext}
+          handlePrev={handlePrev}
+        />
+      </div>
     </div>
   );
 };

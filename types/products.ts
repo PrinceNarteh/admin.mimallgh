@@ -40,8 +40,10 @@ export interface Product {
   id: string;
   title: string;
   description: string;
+  brand: string;
   price: number;
   stock: number;
+  discountPercentage: number;
   category:
     | "food"
     | "fashion_and_wears"

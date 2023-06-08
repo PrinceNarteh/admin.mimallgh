@@ -15,6 +15,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const EditProduct = ({ product }: { product: Product }) => {
+  console.log(product);
   return (
     <div>
       <Back />
