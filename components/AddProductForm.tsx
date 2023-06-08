@@ -125,6 +125,7 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
     const formData = new FormData();
 
     formData.append("brand", data.brand);
+    formData.append("shopId", data.shopId);
     formData.append("category", data.category);
     formData.append("description", data.description);
     formData.append(
@@ -173,16 +174,23 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
         }
       }
     } catch (error: any) {
+      console.log(error);
       toast.error(error.message);
     } finally {
       toast.dismiss(toastId);
     }
   };
 
+  useEffect(() => {
+    axiosAuth.get("/shops/all").then((res) => setShops(res.data));
+  }, []);
+
   const shopList = shops.map((shop) => ({
     id: shop.id,
     label: shop.name,
   }));
+
+  console.log(getValues().shopId);
 
   return (
     <div className="mx-auto max-w-4xl pb-5">
@@ -196,7 +204,7 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
               errors={errors}
               field="shopId"
               options={shopList}
-              value={getValues().shopId}
+              value="shopId"
               setValue={setValue}
             />
           </div>
