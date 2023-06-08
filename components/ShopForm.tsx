@@ -1,6 +1,6 @@
 import axios, { axiosAuth } from "@/lib/axios";
 import { locations } from "@/utils/menus";
-import { convertBase64, parseImageUrl } from "@/utils/utilities";
+import { convertBase64, parseShopImageUrl } from "@/utils/utilities";
 import { createShopDto, type ICreateShop } from "@/utils/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -42,7 +42,6 @@ const initialState: ICreateShop = {
 
 export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
   const [shop, setShop] = useState<ICreateShop | undefined>(shopData);
-  const [shops, setShops] = useState<Shop[]>([]);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [banner, setBanner] = useState<File | null>(null);
@@ -53,7 +52,6 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
   const axiosAuth = useAxiosAuth();
 
   const {
-    setValue,
     register,
     formState: { errors, isLoading },
     getValues,
@@ -93,7 +91,6 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
   const submitHandler: SubmitHandler<ICreateShop> = async (value) => {
     const formData = new FormData();
     formData.append("closingTime", value.closingTime);
-    formData.append("shopId", value.shopId);
     formData.append("description", value.description);
     formData.append("facebookHandle", value.facebookHandle || "");
     formData.append("instagramHandle", value.instagramHandle || "");
@@ -141,33 +138,12 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
     }
   };
 
-  useEffect(() => {
-    let fetchData = () => {
-      axiosAuth.get("/shops").then((res) => {
-        setShops(res.data.data);
-      });
-    };
-    fetchData();
-  }, []);
-
   if (isLoading) return <Loader />;
-
-  const shopList = shops.map((shop) => ({
-    id: shop.id,
-    label: shop.name,
-  }));
 
   return (
     <div className="pb-10">
       <Card heading={`${getValues().id ? "Edit" : "Add"} Shop`}>
         <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
-          <SearchFilter
-            errors={errors}
-            field="shopId"
-            options={shopList}
-            value={getValues().shopId}
-            setValue={setValue}
-          />
           <div className="flex flex-col gap-5 lg:flex-row">
             <InputField
               name="name"
@@ -293,7 +269,7 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
                     className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
                   />
                   <Image
-                    src={parseImageUrl(shop.image, "shops")}
+                    src={parseShopImageUrl(shop.image)}
                     width={300}
                     height={300}
                     alt=""
@@ -314,7 +290,7 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
                     className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
                   />
                   <Image
-                    src={parseImageUrl(shop.banner, "shops")}
+                    src={parseShopImageUrl(shop.banner)}
                     fill
                     alt=""
                     className="rounded-md object-cover"

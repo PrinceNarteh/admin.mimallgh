@@ -1,4 +1,3 @@
-import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import type { ChangeEvent } from "react";
@@ -8,12 +7,20 @@ import { toast } from "react-hot-toast";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 
 import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
-import { Product } from "@/types";
+import { Shop } from "@/types";
+import { Product } from "@/types/products";
 import { categories } from "@/utils/menus";
-import { convertBase64 } from "@/utils/utilities";
-import { deleteProductImage } from "@/utils/deleteProductImage";
-import { ICreateProduct } from "@/utils/validations";
-import { Button, Card, InputField, Modal, SelectOption } from "./index";
+import { convertBase64, parseProductImageUrl } from "@/utils/utilities";
+import { omit } from "lodash";
+import { ICreateProduct } from "../utils/validations";
+import {
+  Button,
+  Card,
+  InputField,
+  Modal,
+  SearchFilter,
+  SelectOption,
+} from "./index";
 
 const initialValues: ICreateProduct = {
   brand: "",
@@ -28,6 +35,7 @@ const initialValues: ICreateProduct = {
 };
 
 export const AddProductForm = ({ product }: { product?: Product }) => {
+  const data = omit(product, ["shop", "createdAt", "updatedAt"]);
   const {
     query: { productId },
     push,
@@ -37,15 +45,17 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
     register,
     formState: { errors },
     setValue,
+    reset,
     getValues,
     handleSubmit,
   } = useForm<ICreateProduct>({
-    defaultValues: product ? product : initialValues,
+    defaultValues: product ? data : initialValues,
   });
+  const [shops, setShops] = useState<Shop[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
-  const [publicId, setPublicId] = useState("");
+  const [imageId, setImageId] = useState("");
   const axiosAuth = useAxiosAuth();
 
   const selectedImages = (e: ChangeEvent<HTMLInputElement>) => {
@@ -59,8 +69,13 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
 
   function deleteSelectedImage(index: number) {
     const imageCopy = [...images];
-    imageCopy.splice(index, 1);
-    setImages([...imageCopy]);
+    if (images.length === 1) {
+      setImages([]);
+      setPreviewImages([]);
+    } else {
+      imageCopy.splice(index, 1);
+      setImages([...imageCopy]);
+    }
   }
 
   useEffect(() => {
@@ -79,8 +94,8 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
     getImages();
   }, [images]);
 
-  const deleteImage = (public_id: string) => {
-    setPublicId(public_id);
+  const deleteImage = (name: string) => {
+    setImageId(name);
     setOpenDialog(true);
   };
 
@@ -89,13 +104,10 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
       const toastId = toast.loading("Loading...");
 
       try {
-        await deleteProductImage(publicId);
-
-        const newImages = getValues().images.filter(
-          (image) => image.public_id !== publicId
+        const res = await axiosAuth.delete(
+          `products/${product?.id}/image/${imageId}`
         );
-
-        setValue("images", newImages);
+        reset(res.data);
         toast.dismiss(toastId);
         toast.success("Image deleted successfully");
       } catch (error) {
@@ -110,67 +122,84 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
 
   const submitHandler: SubmitHandler<ICreateProduct> = async (data) => {
     const toastId = toast.loading("Loading");
-    const imageUrls = [];
-
     const formData = new FormData();
-    formData.append("cloud_name", "prinart");
-    formData.append("upload_preset", "mimall");
 
-    for (let i = 0; i < images.length; i++) {
-      formData.append("file", images[i] as File);
-      imageUrls[i] = axios.post(
-        "https://api.cloudinary.com/v1_1/prinart/image/upload",
-        formData,
-        { headers: { "X-Requested-With": "XMLHttpRequest" } }
-      );
-    }
+    formData.append("brand", data.brand);
+    formData.append("category", data.category);
+    formData.append("description", data.description);
+    formData.append(
+      "discountPercentage",
+      data.discountPercentage?.toString() || "0"
+    );
+    formData.append("price", data.price.toString());
+    formData.append("stock", data.stock.toString());
+    formData.append("title", data.title.toString());
 
     try {
-      let imagesArr: {
-        public_id: any;
-        secure_url: any;
-      }[] = [];
-
-      await Promise.all(imageUrls).then((res) => {
-        imagesArr = res.map((item) => ({
-          public_id: item.data.public_id,
-          secure_url: item.data.secure_url,
-        }));
-      });
-
-      const newData = {
-        ...data,
-        images: [...data.images, ...imagesArr],
-      };
-
-      // if (productId) {
-      //   const res = await axiosAuth.patch(`/products/${productId}`, newData);
-      //   if (res.status === 200) {
-      //     toast.success("Product updated successfully");
-      //     push(`/products/${productId}`);
-      //   } else {
-      //     toast.error("Error updating product");
-      //   }
-      // } else {
-      //   const res = await axiosAuth.post("/products", newData);
-      //   if (res.status === 201) {
-      //     toast.success("Product created successfully");
-      //     push(`/products/${res.data.id}`);
-      //   } else {
-      //     toast.error("Error updating product");
-      //   }
-      // }
+      if (productId) {
+        formData.append("images", JSON.stringify(data.images));
+        images.forEach((image) => {
+          formData.append("newImages", image);
+        });
+        const res = await axiosAuth.patch(
+          `/products/admin/${productId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multiple/form-data",
+            },
+          }
+        );
+        if (res.status === 200) {
+          toast.success("Product updated successfully");
+          push(`/products/${productId}`);
+        } else {
+          toast.error("Error updating product");
+        }
+      } else {
+        images.forEach((image) => {
+          formData.append("images", image);
+        });
+        const res = await axiosAuth.post("/products/admin", formData, {
+          headers: {
+            "Content-Type": "multiple/form-data",
+          },
+        });
+        if (res.status === 201) {
+          toast.success("Product created successfully");
+          push(`/products/${res.data.id}`);
+        } else {
+          toast.error("Error updating product");
+        }
+      }
     } catch (error: any) {
-      return error.message;
+      toast.error(error.message);
     } finally {
       toast.dismiss(toastId);
     }
   };
 
+  const shopList = shops.map((shop) => ({
+    id: shop.id,
+    label: shop.name,
+  }));
+
   return (
     <div className="mx-auto max-w-4xl pb-5">
       <Card heading={"Add Product"}>
         <form onSubmit={handleSubmit(submitHandler)}>
+          <div className="my-2 w-full">
+            <label className="mb-1.5 block pl-2 capitalize tracking-widest">
+              Shop
+            </label>
+            <SearchFilter
+              errors={errors}
+              field="shopId"
+              options={shopList}
+              value={getValues().shopId}
+              setValue={setValue}
+            />
+          </div>
           <div className="space-y-4">
             <InputField
               label="Title"
@@ -264,15 +293,15 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
                       className="relative h-32 w-32 shrink-0 rounded-md bg-slate-500"
                     >
                       <AiOutlineCloseCircle
-                        onClick={() => deleteImage(image.public_id)}
-                        className="absolute -right-2 -top-2 z-0 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
+                        onClick={() => deleteImage(image.id)}
+                        className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
                       />
                       <div className="overflow-hidden">
                         <Image
-                          src={image.secure_url}
-                          style={{ objectFit: "contain" }}
+                          src={parseProductImageUrl(image.name)}
+                          style={{ objectFit: "cover" }}
                           alt=""
-                          sizes="128"
+                          sizes="128px"
                           fill
                           className="rounded"
                         />
@@ -283,12 +312,13 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
               </div>
             ) : null}
 
+            {/* Product Images */}
             <div className="">
               <label
                 className="mb-2 block bg-light-gray pl-2 capitalize tracking-widest"
                 htmlFor="user_avatar"
               >
-                Product Image(s)
+                Select Product Image(s)
               </label>
               <input
                 className="block w-full cursor-pointer rounded-lg border bg-dark-gray file:border-none file:bg-light-gray file:px-5 file:py-3 file:text-white"
@@ -313,8 +343,8 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
                   <div className="overflow-hidden">
                     <Image
                       src={image}
-                      width="128"
-                      height="128"
+                      fill
+                      sizes="128px"
                       style={{ objectFit: "cover" }}
                       alt=""
                       className="rounded"
@@ -325,7 +355,7 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
             </div>
           </div>
 
-          <div className="my-5">
+          {/* <div className="my-5">
             <label
               className="mb-2 block bg-light-gray pl-2 capitalize tracking-widest"
               htmlFor="user_avatar"
@@ -341,7 +371,7 @@ export const AddProductForm = ({ product }: { product?: Product }) => {
               multiple
               accept=".png, .jpg, .jpeg"
             ></input>
-          </div>
+          </div> */}
           <Button type="submit">{productId ? "Edit" : "Add"} Product</Button>
         </form>
       </Card>

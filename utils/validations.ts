@@ -38,8 +38,8 @@ export const createProductDto = z.object({
     .optional(),
   images: z.array(
     z.object({
-      public_id: z.string(),
-      secure_url: z.string(),
+      id: z.string(),
+      name: z.string(),
     })
   ),
 });
