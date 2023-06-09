@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 import { Back, Button, Card, Modal, Loader } from "@/components";
-import { capitalize, parseImageUrl } from "@/utils/utilities";
+import { capitalize, parseShopImageUrl } from "@/utils/utilities";
 import { Shop } from "@/types";
 import { GetServerSideProps } from "next";
 import { getShop } from "@/services/shops";
@@ -109,7 +109,7 @@ const ShopDetails = ({ shop }: { shop: Shop }) => {
               <div>
                 <p className="mb-2 text-lg font-semibold">Shop Image</p>
                 <Image
-                  src={parseImageUrl(shop.image, "shops")}
+                  src={parseShopImageUrl(shop.image)}
                   width={200}
                   height={200}
                   alt=""
@@ -122,7 +122,7 @@ const ShopDetails = ({ shop }: { shop: Shop }) => {
                 <p className="mb-2 text-lg font-semibold">Shop Banner</p>
                 <div className="relative h-[200px] rounded">
                   <Image
-                    src={parseImageUrl(shop.banner, "shops")}
+                    src={parseShopImageUrl(shop.banner)}
                     fill
                     alt=""
                     className="rounded-md object-cover"
