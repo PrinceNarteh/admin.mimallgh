@@ -225,7 +225,7 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
                   type="text"
                   id="email-address-icon"
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  placeholder="Eg. https://wwww.facebook.com/username/"
+                  placeholder="Eg. MiMall GH"
                   {...register("facebookHandle")}
                 />
               </div>
@@ -237,7 +237,7 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
                   type="text"
                   id="email-address-icon"
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  placeholder="Eg. https://www.instagram.com/username/"
+                  placeholder="Eg. mimall_gh"
                   {...register("instagramHandle")}
                 />
               </div>
@@ -249,7 +249,7 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
                   type="text"
                   id="email-address-icon"
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 file:text-light-gray focus:border-blue-500  focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  placeholder="Eg. https://wa.me/0201234567"
+                  placeholder="Eg. 233244000000"
                   {...register("whatsappNumber")}
                 />
               </div>
