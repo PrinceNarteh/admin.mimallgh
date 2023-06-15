@@ -123,17 +123,17 @@ export const DeliveryCompanyForm = ({
     const formData = new FormData();
     formData.append("name", value.name);
     formData.append("phoneNumber", value.phoneNumber);
-    formData.append("alternatePhoneNumber", value.alternateNumber || "");
+    formData.append("alternatePhoneNumber", value.alternatePhoneNumber || "");
+    formData.append("location", value.location || "");
     formData.append("whatsappNumber", value.whatsappNumber);
 
     if (deliveryCompany?.id) {
       try {
         if (value.id) formData.append("id", value.id);
-        if (images) {
-          images.forEach((image) => {
-            formData.append("newImage", image);
-          });
-        }
+        formData.append("images", JSON.stringify(value.images));
+        images.forEach((image) => {
+          formData.append("newImages", image);
+        });
 
         const res = await axios.patch(
           `/delivery-companies/${deliveryCompany?.id}`,
@@ -148,22 +148,24 @@ export const DeliveryCompanyForm = ({
         toast.success("Delivery Company updated successfully");
         router.push(`/delivery-companies/${res.data.id}`);
       } catch (error) {
-        console.log(error);
         toast.error("Error updating Delivery Company");
       }
     } else {
       try {
-        const res = await axios.post("/delivery-company", formData, {
+        images.forEach((image) => {
+          formData.append("images", image);
+        });
+        const res = await axios.post("/delivery-companies", formData, {
           headers: {
             "Content-Type": "form-data/multipart",
           },
         });
 
-        toast.success("Shop created successfully");
-        router.push(`/shops/${res.data.id}`);
+        toast.success("Delivery company created successfully");
+        router.push(`/delivery-companies/${res.data.id}`);
       } catch (error) {
         console.log(error);
-        toast.error("Error creating shop");
+        toast.error("Error creating Delivery Company");
       }
     }
   };

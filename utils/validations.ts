@@ -145,7 +145,8 @@ export const createDeliveryCompanyDto = z.object({
   whatsappNumber: z
     .string({ required_error: "Phone number is required." })
     .length(10, "Phone number must be ten numbers"),
-  alternateNumber: z.string().optional(),
+  alternatePhoneNumber: z.string().optional(),
+  location: z.string().optional(),
   images: z.array(
     z.object({
       id: z.string(),
