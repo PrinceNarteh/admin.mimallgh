@@ -41,13 +41,16 @@ export const DeliveryCompanyForm = ({
   const {
     register,
     reset,
-    formState: { errors, isLoading },
+    formState: { errors },
     handleSubmit,
   } = useForm({
     defaultValues: deliveryCompany ? deliveryCompany : initialState,
     resolver: zodResolver(createDeliveryCompanyDto),
   });
   const [images, setImages] = useState<File[]>([]);
+  const [sliderImages, setSliderImages] = useState<
+    { id: string; name: string }[]
+  >(deliveryCompany?.images || []);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [imageId, setImageId] = useState("");
@@ -102,11 +105,13 @@ export const DeliveryCompanyForm = ({
 
       try {
         const res = await axiosAuth.delete(
-          `delivery-companies/image/${imageId}`
+          `delivery-companies/${router.query.deliveryCompanyId}/image/${imageId}`
         );
-        reset(res.data);
-        toast.dismiss(toastId);
-        toast.success("Image deleted successfully");
+        if (res.status === 200) {
+          setSliderImages(res.data.images);
+          toast.dismiss(toastId);
+          toast.success("Image deleted successfully");
+        }
       } catch (error) {
         toast.dismiss(toastId);
       } finally {
@@ -217,7 +222,7 @@ export const DeliveryCompanyForm = ({
               />
             </div>
             <div className="flex flex-col gap-5 md:flex-row p-4">
-              {deliveryCompany?.images.map((image) => (
+              {sliderImages.map((image) => (
                 <div className="relative basis-60 h-40 flex-1">
                   <AiOutlineCloseCircle
                     onClick={() => handleDelete(image.id)}
