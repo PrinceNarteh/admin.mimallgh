@@ -1,27 +1,18 @@
-import axios, { axiosAuth } from "@/lib/axios";
+import axios from "@/lib/axios";
+import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
 import { locations } from "@/utils/menus";
 import { convertBase64, parseShopImageUrl } from "@/utils/utilities";
 import { createShopDto, type ICreateShop } from "@/utils/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { FiInstagram } from "react-icons/fi";
 import { ImFacebook2, ImWhatsapp } from "react-icons/im";
-import {
-  Button,
-  Card,
-  InputField,
-  Loader,
-  Modal,
-  SearchFilter,
-  SelectField,
-} from "./index";
-import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
-import { Shop } from "@/types";
+import { Button, Card, InputField, Loader, Modal, SelectField } from "./index";
 
 const initialState: ICreateShop = {
   id: undefined,

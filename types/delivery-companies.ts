@@ -1,7 +1,7 @@
 export interface IDeliveryCompany {
-  id: string;
+  id?: string;
   name: string;
-  slug: string;
+  slug?: string;
   phoneNumber: string;
   alternatePhoneNumber?: string;
   whatsappNumber: string;

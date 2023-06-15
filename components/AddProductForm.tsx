@@ -179,7 +179,6 @@ export const AddProductForm = ({ product }: { product?: any }) => {
         }
       }
     } catch (error: any) {
-      console.log(error);
       toast.error(error.message);
     } finally {
       toast.dismiss(toastId);
@@ -194,8 +193,6 @@ export const AddProductForm = ({ product }: { product?: any }) => {
     id: shop.id,
     label: shop.name,
   }));
-
-  console.log(getValues().shopId);
 
   return (
     <div className="mx-auto max-w-4xl pb-5">

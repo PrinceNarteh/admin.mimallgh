@@ -23,6 +23,20 @@ export const menus = [
       },
     ],
   },
+  {
+    name: "Delivery Comp.",
+    icon: FiShoppingBag,
+    subLinks: [
+      {
+        name: "Delivery Comp. List",
+        link: "/delivery-companies",
+      },
+      {
+        name: "Add Delivery Comp.",
+        link: "/delivery-companies/add",
+      },
+    ],
+  },
 
   {
     name: "Shops",

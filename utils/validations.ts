@@ -133,3 +133,25 @@ export const adminDto = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+export const createDeliveryCompanyDto = z.object({
+  id: z.union([z.string().cuid2(), z.undefined()]),
+  name: z
+    .string({ required_error: "Company name is required." })
+    .min(1, "Company name cannot be empty"),
+  phoneNumber: z
+    .string({ required_error: "Phone number is required." })
+    .length(10, "Phone number must be ten numbers"),
+  whatsappNumber: z
+    .string({ required_error: "Phone number is required." })
+    .length(10, "Phone number must be ten numbers"),
+  alternateNumber: z.string().optional(),
+  images: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+    })
+  ),
+});
+
+export type ICreateDeliveryCompany = z.infer<typeof createDeliveryCompanyDto>;

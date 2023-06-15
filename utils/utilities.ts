@@ -18,13 +18,13 @@ export const convertBase64 = (file: File): Promise<string> => {
   });
 };
 
-// export const parseProductImageUrl = (imageName: string) => {
-//   return `${process.env.NEXT_PUBLIC_BASE_URL}/products/image/${imageName}`;
-// };
+export const parseProductImageUrl = (imageName: string) => {
+  return `${process.env.NEXT_PUBLIC_BASE_URL}/products/image/${imageName}`;
+};
 
-// export const parseShopImageUrl = (imageName: string) => {
-//   return `${process.env.NEXT_PUBLIC_BASE_URL}/shop/image/${imageName}`;
-// };
+export const parseShopImageUrl = (imageName: string) => {
+  return `${process.env.NEXT_PUBLIC_BASE_URL}/shop/image/${imageName}`;
+};
 
 export const parseDeliveryImageUrl = (imageName: string) => {
   return `${process.env.NEXT_PUBLIC_BASE_URL}/delivery-companies/image/${imageName}`;
