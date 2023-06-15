@@ -6,31 +6,22 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 
+import axios from "@/lib/axios";
 import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
-import { Shop } from "@/types";
-import { categories } from "@/utils/menus";
+import { IDeliveryCompany } from "@/types/delivery-companies";
 import { convertBase64, parseDeliveryImageUrl } from "@/utils/utilities";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ICreateDeliveryCompany,
-  ICreateProduct,
   createDeliveryCompanyDto,
 } from "../utils/validations";
-import {
-  Button,
-  Card,
-  InputField,
-  Modal,
-  SearchFilter,
-  SelectOption,
-} from "./index";
-import { IDeliveryCompany } from "@/types/delivery-companies";
-import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "@/lib/axios";
+import { Button, Card, InputField, Modal } from "./index";
 
 const initialState: IDeliveryCompany = {
   id: undefined,
   name: "",
   slug: "",
+  location: "",
   images: [],
   phoneNumber: "",
   whatsappNumber: "",
@@ -51,7 +42,6 @@ export const DeliveryCompanyForm = ({
     register,
     reset,
     formState: { errors, isLoading },
-    getValues,
     handleSubmit,
   } = useForm({
     defaultValues: deliveryCompany ? deliveryCompany : initialState,
@@ -62,6 +52,8 @@ export const DeliveryCompanyForm = ({
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [imageId, setImageId] = useState("");
   const axiosAuth = useAxiosAuth();
+
+  console.log(deliveryCompany);
 
   const selectedImages = (e: ChangeEvent<HTMLInputElement>) => {
     const files: FileList | null = e.target.files;
@@ -188,7 +180,9 @@ export const DeliveryCompanyForm = ({
               label="Delivery Company Name"
               register={register}
               errors={errors}
-              validationSchema={{ required: "Shop name is required" }}
+              validationSchema={{
+                required: "Delivery company's name is required",
+              }}
             />
             <div className="flex flex-col gap-5 lg:flex-row">
               <InputField
@@ -196,7 +190,7 @@ export const DeliveryCompanyForm = ({
                 label="Phone Number"
                 register={register}
                 errors={errors}
-                validationSchema={{ required: "Location is required" }}
+                validationSchema={{ required: "Phone number is required" }}
               />
               <InputField
                 name="alternatePhoneNumber"
@@ -204,22 +198,35 @@ export const DeliveryCompanyForm = ({
                 register={register}
                 errors={errors}
               />
+            </div>
+            <div className="flex flex-col gap-5 lg:flex-row">
+              <InputField
+                name="whatsappNumber"
+                label="Whatsapp Number"
+                register={register}
+                errors={errors}
+                validationSchema={{ required: "Whatsapp number is required" }}
+              />
+              <InputField
+                name="location"
+                label="Location"
+                register={register}
+                errors={errors}
+              />
+            </div>
+            <div className="flex flex-col gap-5 md:flex-row p-4">
               {deliveryCompany?.images.map((image) => (
-                <div>
-                  <p className="mb-2 text-lg font-semibold">Shop Image</p>
-                  <div className="relative">
-                    <AiOutlineCloseCircle
-                      onClick={() => handleDelete(image.id)}
-                      className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
-                    />
-                    <Image
-                      src={parseDeliveryImageUrl(image.name)}
-                      width={300}
-                      height={300}
-                      alt=""
-                      className="rounded-md"
-                    />
-                  </div>
+                <div className="relative basis-60 h-40 flex-1">
+                  <AiOutlineCloseCircle
+                    onClick={() => handleDelete(image.id)}
+                    className="absolute -right-2 -top-2 z-10 cursor-pointer rounded-full bg-white text-2xl text-orange-500"
+                  />
+                  <Image
+                    src={parseDeliveryImageUrl(image.name)}
+                    alt=""
+                    fill
+                    className="rounded-md object-cover"
+                  />
                 </div>
               ))}
             </div>
@@ -230,7 +237,7 @@ export const DeliveryCompanyForm = ({
                 className="mb-2 block bg-light-gray pl-2 capitalize tracking-widest"
                 htmlFor="user_avatar"
               >
-                Select Product Image(s)
+                Slider Image(s)
               </label>
               <input
                 className="block w-full cursor-pointer rounded-lg border bg-dark-gray file:border-none file:bg-light-gray file:px-5 file:py-3 file:text-white"

@@ -12,7 +12,6 @@ export const getDeliveryCompanies = async () => {
 export const getDeliveryCompany = async (getDeliveryCompanyId: string) => {
   try {
     const res = await axios.get(`/delivery-companies/${getDeliveryCompanyId}`);
-    console.log(res);
     return res.data;
   } catch (error: any) {
     return error.message;
