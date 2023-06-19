@@ -19,27 +19,13 @@ export const convertBase64 = (file: File): Promise<string> => {
 };
 
 export const parseProductImageUrl = (imageName: string) => {
-  return `${process.env.NEXT_PUBLIC_BASE_URL}/products/image/${imageName}`;
+  return `https://api.mimallgh.com/products/image/${imageName}`;
 };
 
 export const parseShopImageUrl = (imageName: string) => {
-  return `${process.env.NEXT_PUBLIC_BASE_URL}/shop/image/${imageName}`;
+  return `https://api.mimallgh.com/shops/image/${imageName}`;
 };
 
-export const parseDeliveryImageUrl = (imageName: string) => {
-  return `${process.env.NEXT_PUBLIC_BASE_URL}/delivery-companies/image/${imageName}`;
+export const parseImageUrl = (imageName: string, entity: string) => {
+  return `https://api.mimallgh.com/${entity}/image/${imageName}`;
 };
-
-// Production
-// export const parseProductImageUrl = (imageName: string) => {
-//   return `https://api.mimallgh.com/products/image/${imageName}`;
-// };
-
-// export const parseShopImageUrl = (imageName: string) => {
-//   return `https://api.mimallgh.com/shops/image/${imageName}`;
-// };
-
-// production
-// export const parseImageUrl = (imageName: string, entity: string) => {
-//   return `https://api.mimallgh.com/${entity}/image/${imageName}`;
-// };

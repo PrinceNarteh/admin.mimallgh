@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
+const BASE_URL = "https://api.mimallgh.com";
 
 export default axios.create({
   baseURL: BASE_URL,
