@@ -26,6 +26,6 @@ export const parseShopImageUrl = (imageName: string) => {
   return `https://api.mimallgh.com/shops/image/${imageName}`;
 };
 
-export const parseImageUrl = (imageName: string, entity: string) => {
-  return `https://api.mimallgh.com/${entity}/image/${imageName}`;
+export const parseDeliveryImageUrl = (imageName: string) => {
+  return `https://api.mimallgh.com/delivery-companies/image/${imageName}`;
 };
