@@ -22,8 +22,6 @@ const DeliveryCompanies = ({
 }) => {
   const router = useRouter();
 
-  console.log(deliveryCompanies);
-
   return (
     <div className="w-11/12 mx-auto">
       <div className=" flex justify-center">
@@ -52,28 +50,29 @@ const DeliveryCompanies = ({
               </tr>
             </thead>
             <tbody>
-              {deliveryCompanies.map((deliveryCompany, idx) => (
-                <tr
-                  key={idx}
-                  onClick={() =>
-                    router.push(`/delivery-companies/${deliveryCompany.id}`)
-                  }
-                  className="cursor-pointer rounded bg-light-gray hover:scale-105 duration-500"
-                >
-                  <td className="py-5 text-center ">{idx + 1}</td>
-                  <td className="py-5 text-left ">{deliveryCompany.name}</td>
-                  <td className="py-5 text-left">{deliveryCompany.slug}</td>
-                  <td className="py-5 text-center ">
-                    {deliveryCompany.phoneNumber}
-                  </td>
-                  <td className="py-5 pr-5 text-center">
-                    {deliveryCompany.alternatePhoneNumber}
-                  </td>
-                  <td className="py-5 text-center ">
-                    {deliveryCompany.whatsappNumber}
-                  </td>
-                </tr>
-              ))}
+              {deliveryCompanies &&
+                deliveryCompanies.map((deliveryCompany, idx) => (
+                  <tr
+                    key={idx}
+                    onClick={() =>
+                      router.push(`/delivery-companies/${deliveryCompany.id}`)
+                    }
+                    className="cursor-pointer rounded bg-light-gray hover:scale-105 duration-500"
+                  >
+                    <td className="py-5 text-center ">{idx + 1}</td>
+                    <td className="py-5 text-left ">{deliveryCompany.name}</td>
+                    <td className="py-5 text-left">{deliveryCompany.slug}</td>
+                    <td className="py-5 text-center ">
+                      {deliveryCompany.phoneNumber}
+                    </td>
+                    <td className="py-5 pr-5 text-center">
+                      {deliveryCompany.alternatePhoneNumber}
+                    </td>
+                    <td className="py-5 text-center ">
+                      {deliveryCompany.whatsappNumber}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

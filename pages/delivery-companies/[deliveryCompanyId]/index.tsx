@@ -31,8 +31,6 @@ const DeliveryCompanyDetails = ({
   const router = useRouter();
   const axiosAuth = useAxiosAuth();
 
-  console.log(deliveryCompany);
-
   const handleDelete = () => setOpenDialog(true);
 
   async function confirmDelete(choose: boolean) {

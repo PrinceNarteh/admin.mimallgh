@@ -20,7 +20,6 @@ const EditDeliveryCompany = ({
 }: {
   deliveryCompany: IDeliveryCompany;
 }) => {
-  console.log(deliveryCompany);
   return (
     <div>
       <Back />

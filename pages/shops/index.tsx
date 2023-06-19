@@ -66,9 +66,6 @@ const Shops = ({ shops }: { shops: IShop }) => {
     }
   }, [search]);
 
-  console.log(state);
-  console.log(shops);
-
   if (isLoading) return <Loader />;
 
   return (

@@ -56,8 +56,6 @@ export const DeliveryCompanyForm = ({
   const [imageId, setImageId] = useState("");
   const axiosAuth = useAxiosAuth();
 
-  console.log(deliveryCompany);
-
   const selectedImages = (e: ChangeEvent<HTMLInputElement>) => {
     const files: FileList | null = e.target.files;
     let pickedImages: File[] = [];
@@ -169,7 +167,6 @@ export const DeliveryCompanyForm = ({
         toast.success("Delivery company created successfully");
         router.push(`/delivery-companies/${res.data.id}`);
       } catch (error) {
-        console.log(error);
         toast.error("Error creating Delivery Company");
       }
     }

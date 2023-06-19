@@ -65,8 +65,6 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
     if (choose) {
       let res = await axiosAuth.delete(`/shops/${active}/${shop?.id}`);
 
-      console.log(res.data);
-
       if (res.status === 200) {
         toast.success("Image deleted successfully");
         setShop(res.data);
@@ -109,7 +107,6 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
         toast.success("Shop updated successfully");
         router.push(`/shops/${res.data.id}`);
       } catch (error) {
-        console.log(error);
         toast.error("Error updating shop");
       }
     } else {
@@ -123,7 +120,6 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
         toast.success("Shop created successfully");
         router.push(`/shops/${res.data.id}`);
       } catch (error) {
-        console.log(error);
         toast.error("Error creating shop");
       }
     }

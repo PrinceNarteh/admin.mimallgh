@@ -19,8 +19,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const OrderDetails = ({ order }: { order: Order }) => {
-  console.log(order);
-
   const subTotal = order.items.reduce(
     (amt, currItem) => amt + currItem.price * currItem.quantity,
     0
