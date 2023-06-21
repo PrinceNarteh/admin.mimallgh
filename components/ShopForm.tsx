@@ -41,8 +41,6 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
   const router = useRouter();
   const axiosAuth = useAxiosAuth();
 
-  console.log(shop);
-
   const {
     register,
     formState: { errors, isLoading },
@@ -78,8 +76,6 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
     }
   }
 
-  console.log(errors);
-
   const submitHandler: SubmitHandler<ICreateShop> = async (value) => {
     const toastId = toast.loading("Loading");
 
@@ -98,8 +94,6 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
     if (shop?.id) {
       try {
         if (value.id) formData.append("id", value.id);
-        formData.append("image", value.image as string);
-        formData.append("banner", value.banner as string);
         if (image) formData.append("newImage", image);
         if (banner) formData.append("newBanner", banner);
 
@@ -112,7 +106,6 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
         toast.success("Shop updated successfully");
         router.push(`/shops/${res.data.id}`);
       } catch (error) {
-        console.log(error);
         toast.error("Error updating shop");
       } finally {
         toast.dismiss(toastId);
@@ -131,14 +124,11 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
         toast.success("Shop created successfully");
         router.push(`/shops/${res.data.id}`);
       } catch (error) {
-        console.log(error);
         toast.dismiss(toastId);
         toast.error("Error creating shop");
       }
     }
   };
-
-  console.log(errors);
 
   if (isLoading) return <Loader />;
 
