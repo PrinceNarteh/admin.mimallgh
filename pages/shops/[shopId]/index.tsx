@@ -14,6 +14,7 @@ import Image from "next/image";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { shopId } = context.query;
   const data = await getShop(shopId as string);
+  context.res.setHeader("Cache-Control", "no-store");
 
   return {
     props: {

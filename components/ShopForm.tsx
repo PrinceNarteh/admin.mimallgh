@@ -16,7 +16,6 @@ import { Button, Card, InputField, Loader, Modal, SelectField } from "./index";
 
 const initialState: ICreateShop = {
   id: undefined,
-  shopId: "",
   name: "",
   location: "",
   mapDirection: "",
@@ -41,6 +40,8 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
   const [active, setActive] = useState<"image" | "banner" | null>(null);
   const router = useRouter();
   const axiosAuth = useAxiosAuth();
+
+  console.log(shop);
 
   const {
     register,
@@ -77,7 +78,11 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
     }
   }
 
+  console.log(errors);
+
   const submitHandler: SubmitHandler<ICreateShop> = async (value) => {
+    const toastId = toast.loading("Loading");
+
     const formData = new FormData();
     formData.append("closingTime", value.closingTime);
     formData.append("description", value.description);
@@ -89,12 +94,12 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
     formData.append("openingTime", value.openingTime);
     formData.append("phoneNumber", value.phoneNumber);
     formData.append("whatsappNumber", value.whatsappNumber || "");
-    formData.append("image", value.image as string);
-    formData.append("banner", value.banner as string);
 
     if (shop?.id) {
       try {
         if (value.id) formData.append("id", value.id);
+        formData.append("image", value.image as string);
+        formData.append("banner", value.banner as string);
         if (image) formData.append("newImage", image);
         if (banner) formData.append("newBanner", banner);
 
@@ -107,23 +112,33 @@ export const ShopForm = ({ shop: shopData }: { shop?: any }) => {
         toast.success("Shop updated successfully");
         router.push(`/shops/${res.data.id}`);
       } catch (error) {
+        console.log(error);
         toast.error("Error updating shop");
+      } finally {
+        toast.dismiss(toastId);
       }
     } else {
       try {
+        if (image) formData.append("image", image);
+        if (banner) formData.append("banner", banner);
         const res = await axios.post("/shop-auth/register", formData, {
           headers: {
             "Content-Type": "form-data/multipart",
           },
         });
 
+        toast.dismiss(toastId);
         toast.success("Shop created successfully");
         router.push(`/shops/${res.data.id}`);
       } catch (error) {
+        console.log(error);
+        toast.dismiss(toastId);
         toast.error("Error creating shop");
       }
     }
   };
+
+  console.log(errors);
 
   if (isLoading) return <Loader />;
 

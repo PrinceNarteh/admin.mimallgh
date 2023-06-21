@@ -51,7 +51,6 @@ export type IUpdateProduct = z.infer<typeof updateProductDto>;
 // Shop
 export const createShopDto = z.object({
   id: z.union([z.undefined(), z.string().cuid2()]),
-  shopId: z.string().cuid2(),
   name: z
     .string({ required_error: "Shop name is required" })
     .min(1, "Shop name cannot be empty"),
