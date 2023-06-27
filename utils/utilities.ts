@@ -18,27 +18,16 @@ export const convertBase64 = (file: File): Promise<string> => {
   });
 };
 
-// export const parseProductImageUrl = (imageName: string | undefined) => {
-//   return `http://localhost:4000/products/image/${imageName}`;
-// };
+const BASE_URL = "https://api.mimallgh.com";
 
-// export const parseShopImageUrl = (imageName: string | undefined) => {
-//   return `http://localhost:4000/shops/image/${imageName}`;
-// };
-
-// export const parseDeliveryImageUrl = (imageName: string | undefined) => {
-//   return `http://localhost:4000/delivery-companies/image/${imageName}`;
-// };
-
-// Production;
 export const parseProductImageUrl = (imageName: string) => {
-  return `https://api.mimallgh.com/products/image/${imageName}`;
+  return `${BASE_URL}/products/image/${imageName}`;
 };
 
 export const parseShopImageUrl = (imageName: string) => {
-  return `https://api.mimallgh.com/shops/image/${imageName}`;
+  return `${BASE_URL}/shops/image/${imageName}`;
 };
 
 export const parseDeliveryImageUrl = (imageName: string) => {
-  return `https://api.mimallgh.com/delivery-companies/image/${imageName}`;
+  return `${BASE_URL}/delivery-companies/image/${imageName}`;
 };
