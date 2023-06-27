@@ -24,6 +24,16 @@ export const menus = [
     ],
   },
   {
+    name: "Deliveries",
+    icon: FiShoppingBag,
+    subLinks: [
+      {
+        name: "Delivery List",
+        link: "/deliveries",
+      },
+    ],
+  },
+  {
     name: "Delivery Comp.",
     icon: FiShoppingBag,
     subLinks: [
