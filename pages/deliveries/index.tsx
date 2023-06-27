@@ -19,8 +19,8 @@ const Deliveries = ({ deliveries }: { deliveries: Delivery[] }) => {
 
   console.log(deliveries);
 
-  const navigate = (adminId: string) =>
-    router.push(`/administrators/${adminId}`);
+  const navigate = (deliveryId: string) =>
+    router.push(`/deliveries/${deliveryId}`);
 
   return (
     <div>
@@ -42,9 +42,9 @@ const Deliveries = ({ deliveries }: { deliveries: Delivery[] }) => {
               {deliveries?.map((delivery, idx) => (
                 <tr
                   className="cursor-pointer rounded bg-light-gray"
-                  // onClick={() => {
-                  //   navigate(delivery.).catch((error) => null);
-                  // }}
+                  onClick={() => {
+                    navigate(delivery.id).catch((error) => null);
+                  }}
                   key={idx}
                 >
                   <td className="py-5 text-center">{idx + 1}</td>

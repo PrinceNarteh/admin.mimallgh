@@ -1,4 +1,5 @@
 export type Delivery = {
+  id: string;
   request: string;
   from: string;
   to: string;
