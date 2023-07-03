@@ -35,6 +35,14 @@ const DeliveryDetails = ({ delivery }: { delivery: Delivery }) => {
     }
   }
 
+  const dateAndTime = delivery.dateAndTime.split("T");
+  const dateTime = `${new Date(
+    delivery.dateAndTime
+  ).toDateString()} @ ${new Date(delivery.dateAndTime).toLocaleTimeString()}`;
+  const time = `${delivery.dateAndTime} ${
+    parseInt(delivery.dateAndTime.split(":")[0], 10) < 12 ? "AM" : "PM"
+  }`;
+
   return (
     <div className="pb-5">
       <div className="mx-auto mt-5 max-w-3xl space-y-5">
@@ -55,8 +63,10 @@ const DeliveryDetails = ({ delivery }: { delivery: Delivery }) => {
           />
           <DetailItem label="From" value={`${delivery.from}`} />
           <DetailItem label="To" value={`${delivery.to}`} dark />
-          <DetailItem label="Date" value={delivery.date} />
-          <DetailItem label="Time" value={delivery.time} dark />
+          <DetailItem
+            label={`${dateAndTime.length > 1 ? "Data and Time" : "Time"}`}
+            value={`${dateAndTime.length > 1 ? dateTime : time}`}
+          />
         </Card>
         <div className="flex items-center justify-end gap-5">
           <Link href="#" className="link">

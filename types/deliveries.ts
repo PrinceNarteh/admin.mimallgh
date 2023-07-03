@@ -8,8 +8,7 @@ export type Delivery = {
   fullName: string;
   phoneNumber: string;
   location: string;
-  time: string;
-  date: string;
+  dateAndTime: string;
   deliveryCharge: number;
   deliveryCompany: string;
 };
